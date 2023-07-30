@@ -6,7 +6,6 @@ package gate
 
 import (
 	"context"
-
 	"github.com/cr-mao/lorig/component"
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"
@@ -15,10 +14,11 @@ import (
 
 type Gate struct {
 	component.Base
-	opts    *options
-	ctx     context.Context
-	cancel  context.CancelFunc
-	session *session.Session
+	opts      *options
+	ctx       context.Context
+	cancel    context.CancelFunc
+	session   *session.Session
+	nodeProxy *nodeProxy
 }
 
 func NewGate(opts ...Option) *Gate {
@@ -26,12 +26,11 @@ func NewGate(opts ...Option) *Gate {
 	for _, opt := range opts {
 		opt(o)
 	}
-
 	g := &Gate{}
 	g.opts = o
 	g.session = session.NewSession()
 	g.ctx, g.cancel = context.WithCancel(o.ctx)
-
+	g.nodeProxy = newNodeProxy(g)
 	return g
 }
 
@@ -95,7 +94,7 @@ func (g *Gate) stopNetworkServer() {
 func (g *Gate) handleConnect(conn network.Conn) {
 	g.session.AddConn(conn)
 
-	// 触发连接消息..... todo
+	// 触发连接消息.....
 	//cid, uid := conn.ID(), conn.UID()
 	//ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
 	//g.proxy.trigger(ctx, cluster.Connect, cid, uid)
@@ -120,13 +119,9 @@ func (g *Gate) handleDisconnect(conn network.Conn) {
 
 // 处理接收到的消息
 func (g *Gate) handleReceive(conn network.Conn, data []byte) {
-	//cid, uid := conn.ID(), conn.UID()
-
-	// 投递消息给 node 节点...
-
-	//ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
-	//g.proxy.deliver(ctx, cid, uid, data)
-	//cancel()
+	// 接收到消息
+	connId, userId := conn.ID(), conn.UID()
+	g.nodeProxy.PushMsg(g.opts.id, connId, userId, data)
 }
 
 func (g *Gate) debugPrint() {

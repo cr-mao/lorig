@@ -1,8 +1,8 @@
 package xconv
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/cr-mao/lorig/encoding/json"
 	"reflect"
 	"strconv"
 	"time"

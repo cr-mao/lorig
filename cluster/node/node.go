@@ -12,15 +12,14 @@ import (
 	"github.com/cr-mao/lorig/component"
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"
-	"github.com/cr-mao/lorig/session"
 )
 
 type Node struct {
 	component.Base
-	opts    *options
-	ctx     context.Context
-	cancel  context.CancelFunc
-	session *session.Session
+	opts   *options
+	ctx    context.Context
+	cancel context.CancelFunc
+	//session *session.Session
 }
 
 func NewNode(opts ...Option) *Node {
@@ -31,7 +30,7 @@ func NewNode(opts ...Option) *Node {
 
 	g := &Node{}
 	g.opts = o
-	g.session = session.NewSession()
+	//g.session = session.NewSession()
 	g.ctx, g.cancel = context.WithCancel(o.ctx)
 
 	return g
@@ -44,7 +43,7 @@ func (g *Node) Name() string {
 
 // Init 初始化
 func (g *Node) Init() {
-	if g.opts.id == "" {
+	if g.opts.id == 0 {
 		log.Fatal("instance id can not be empty")
 	}
 
@@ -95,7 +94,7 @@ func (g *Node) stopNetworkServer() {
 
 // 处理连接打开
 func (g *Node) handleConnect(conn network.Conn) {
-	g.session.AddConn(conn)
+	//g.session.AddConn(conn)
 
 	// 触发连接消息..... todo
 	//cid, uid := conn.ID(), conn.UID()
@@ -106,7 +105,8 @@ func (g *Node) handleConnect(conn network.Conn) {
 
 // 处理断开连接
 func (g *Node) handleDisconnect(conn network.Conn) {
-	g.session.RemConn(conn)
+
+	//g.session.RemConn(conn)
 
 	//if cid, uid := conn.ID(), conn.UID(); uid != 0 {
 	//	ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
@@ -118,10 +118,12 @@ func (g *Node) handleDisconnect(conn network.Conn) {
 	//	g.proxy.trigger(ctx, cluster.Disconnect, cid, uid)
 	//	cancel()
 	//}
+
 }
 
 // 处理接收到的消息
 func (g *Node) handleReceive(conn network.Conn, data []byte) {
+
 	//cid, uid := conn.ID(), conn.UID()
 
 	// 投递消息给 node 节点...

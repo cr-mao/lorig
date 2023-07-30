@@ -1,9 +1,8 @@
 package packet_test
 
 import (
-	"testing"
-
 	"github.com/cr-mao/lorig/packet"
+	"testing"
 )
 
 func TestPacket(t *testing.T) {
@@ -15,6 +14,8 @@ func TestPacket(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	t.Log(len(data))
 
 	message, err := packet.Unpack(data)
 	if err != nil {

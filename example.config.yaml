@@ -57,10 +57,10 @@ redis:
   # 非cache场景使用，会话等不能清楚
   redis_db: 10
 packet:
-  endian: "big"
-  seqBytesLen: 2
-  routeBytesLen: 2
-  bufferBytesLen: 5000
+  byteOrder: "big"
+  seqBytes: 2
+  routeBytes: 2
+  bufferBytes: 5000
 # 注册中心
 registry:
   etcd:

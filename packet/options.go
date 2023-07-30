@@ -2,9 +2,8 @@ package packet
 
 import (
 	"encoding/binary"
-	"strings"
-
 	"github.com/cr-mao/lorig/conf"
+	"strings"
 )
 
 const (
@@ -13,52 +12,54 @@ const (
 )
 
 const (
-	defaultSeqBytesLen    = 2
-	defaultRouteBytesLen  = 2
-	defaultBufferBytesLen = 5000
+	defaultRouteBytes   = 2
+	defaultSeqBytes     = 2
+	defaultMessageBytes = 5000
 )
 
 const (
-	defaultEndianKey         = "packet.endian"
-	defaultSeqBytesLenKey    = "packet.seqBytesLen"
-	defaultRouteBytesLenKey  = "packet.routeBytesLen"
-	defaultBufferBytesLenKey = "packet.bufferBytesLen"
+	defaultEndianKey       = "packet.byteOrder"
+	defaultRouteBytesKey   = "packet.routeBytes"
+	defaultSeqBytesKey     = "packet.seqBytes"
+	defaultMessageBytesKey = "packet.bufferBytes"
 )
 
+// -------------------------
+// | route | seq | message |
+// -------------------------
 type options struct {
 	// 字节序
 	// 默认为binary.LittleEndian
 	byteOrder binary.ByteOrder
 
-	// 序列号字节长度（字节），长度为0时不开启序列号编码
-	// 默认为2字节，最大值为65535
-	seqBytesLen int
+	// 路由字节数
+	// 默认为2字节
+	routeBytes int
 
-	// 路由字节长度（字节）
-	// 默认为2字节，最大值为65535
-	routeBytesLen int
+	// 序列号字节数，长度为0时不开启序列号编码
+	// 默认为2字节
+	seqBytes int
 
-	// 消息字节长度（字节）
+	// 消息字节数
 	// 默认为5000字节
-	bufferBytesLen int
+	bufferBytes int
 }
 
 type Option func(o *options)
 
 func defaultOptions() *options {
 	opts := &options{
-		byteOrder:      binary.BigEndian,
-		seqBytesLen:    conf.GetInt(defaultSeqBytesLenKey, defaultSeqBytesLen),
-		routeBytesLen:  conf.GetInt(defaultRouteBytesLenKey, defaultRouteBytesLen),
-		bufferBytesLen: conf.GetInt(defaultBufferBytesLenKey, defaultBufferBytesLen),
+		byteOrder:   binary.BigEndian,
+		routeBytes:  conf.GetInt(defaultRouteBytesKey, defaultRouteBytes),
+		seqBytes:    conf.GetInt(defaultSeqBytesKey, defaultSeqBytes),
+		bufferBytes: conf.GetInt(defaultMessageBytesKey, defaultMessageBytes),
 	}
-	endian := conf.GetString(defaultEndianKey, bigEndian)
+	endian := conf.Get(defaultEndianKey, bigEndian)
 	switch strings.ToLower(endian) {
 	case littleEndian:
 		opts.byteOrder = binary.LittleEndian
-	default:
-		opts.byteOrder = binary.BigEndian
 	}
+
 	return opts
 }
 
@@ -67,17 +68,17 @@ func WithByteOrder(byteOrder binary.ByteOrder) Option {
 	return func(o *options) { o.byteOrder = byteOrder }
 }
 
-// WithSeqBytesLen 设置序列号字节长度
-func WithSeqBytesLen(seqBytesLen int) Option {
-	return func(o *options) { o.seqBytesLen = seqBytesLen }
+// WithRouteBytes 设置路由字节数
+func WithRouteBytes(routeBytes int) Option {
+	return func(o *options) { o.routeBytes = routeBytes }
 }
 
-// WithRouteBytesLen 设置路由字节长度
-func WithRouteBytesLen(routeBytesLen int) Option {
-	return func(o *options) { o.routeBytesLen = routeBytesLen }
+// WithSeqBytes 设置序列号字节数
+func WithSeqBytes(seqBytes int) Option {
+	return func(o *options) { o.seqBytes = seqBytes }
 }
 
-// WithBufferBytesLen 设置消息字节长度
-func WithBufferBytesLen(bufferBytesLen int) Option {
-	return func(o *options) { o.bufferBytesLen = bufferBytesLen }
+// WithMessageBytes 设置消息字节数
+func WithMessageBytes(messageBytes int) Option {
+	return func(o *options) { o.bufferBytes = messageBytes }
 }

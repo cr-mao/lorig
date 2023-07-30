@@ -2,7 +2,7 @@
 User: cr-mao
 Date: 2023/7/30
 Time: 18:40
-Desc: internalServerMsg.go
+Desc: 网关和业务服务器到通信结构
 */
 package msg
 
@@ -12,9 +12,9 @@ import (
 )
 
 type InternalServerMsg struct {
-	GateId  int32  // 暂时没用
-	ConnId  int32  // 网关的连接id
-	UserId  int64  // 网关过来的用户id
+	GateId  int32  // 在业务服 GateId_ConnId 做唯一id  用
+	ConnId  int64  // 网关的连接id
+	UserId  int64  // 网关,业务服务器 用户id，网关可以是0， 业务服返回的肯定是知道哪个用户id的。
 	MsgData []byte // 原始数据
 }
 
