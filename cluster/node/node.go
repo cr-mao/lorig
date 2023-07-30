@@ -9,16 +9,22 @@ package node
 import (
 	"context"
 
+	"github.com/cr-mao/lorig/cluster/msg"
 	"github.com/cr-mao/lorig/component"
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"
+	"github.com/cr-mao/lorig/packet"
 )
+
+// 用户ID， 网关连接id
+type RequestHandler func(conn network.Conn, userId int64, gateWayConnId int64, data []byte)
 
 type Node struct {
 	component.Base
 	opts   *options
 	ctx    context.Context
 	cancel context.CancelFunc
+	Route  map[int32]RequestHandler
 	//session *session.Session
 }
 
@@ -28,50 +34,52 @@ func NewNode(opts ...Option) *Node {
 		opt(o)
 	}
 
-	g := &Node{}
-	g.opts = o
-	//g.session = session.NewSession()
-	g.ctx, g.cancel = context.WithCancel(o.ctx)
+	node := &Node{}
+	node.opts = o
+	//node.session = session.NewSession()
+	node.ctx, node.cancel = context.WithCancel(o.ctx)
+	node.Route = make(map[int32]RequestHandler)
+	return node
+}
 
-	return g
+// 添加路由
+func (n *Node) AddRouter(routerID int32, requestHandler RequestHandler) {
+	n.Route[routerID] = requestHandler
 }
 
 // Name 组件名称
-func (g *Node) Name() string {
-	return g.opts.name
+func (node *Node) Name() string {
+	return node.opts.name
 }
 
 // Init 初始化
-func (g *Node) Init() {
-	if g.opts.id == 0 {
+func (node *Node) Init() {
+	if node.opts.id == 0 {
 		log.Fatal("instance id can not be empty")
 	}
 
-	if g.opts.server == nil {
+	if node.opts.server == nil {
 		log.Fatal("server component is not injected")
 	}
 }
 
 //Start 启动组件
-func (g *Node) Start() {
-	g.startNetworkServer()
+func (node *Node) Start() {
+	node.startNetworkServer()
 
 	//g.registerServiceInstance()
 	//
 	//g.proxy.watch(g.ctx)
 
-	g.debugPrint()
+	node.debugPrint()
 }
 
 // Destroy 销毁组件
-func (g *Node) Destroy() {
+func (node *Node) Destroy() {
 	//g.deregisterServiceInstance()
-
-	g.stopNetworkServer()
-
+	node.stopNetworkServer()
 	//g.stopRPCServer()
-
-	g.cancel()
+	node.cancel()
 }
 
 // 启动网络服务器
@@ -94,46 +102,34 @@ func (g *Node) stopNetworkServer() {
 
 // 处理连接打开
 func (g *Node) handleConnect(conn network.Conn) {
-	//g.session.AddConn(conn)
 
-	// 触发连接消息..... todo
-	//cid, uid := conn.ID(), conn.UID()
-	//ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
-	//g.proxy.trigger(ctx, cluster.Connect, cid, uid)
-	//cancel()
 }
 
 // 处理断开连接
 func (g *Node) handleDisconnect(conn network.Conn) {
 
-	//g.session.RemConn(conn)
-
-	//if cid, uid := conn.ID(), conn.UID(); uid != 0 {
-	//	ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
-	//	_ = g.proxy.unbindGate(ctx, cid, uid)
-	//	g.proxy.trigger(ctx, cluster.Disconnect, cid, uid)
-	//	cancel()
-	//} else {
-	//	ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
-	//	g.proxy.trigger(ctx, cluster.Disconnect, cid, uid)
-	//	cancel()
-	//}
-
 }
 
 // 处理接收到的消息
-func (g *Node) handleReceive(conn network.Conn, data []byte) {
-
-	//cid, uid := conn.ID(), conn.UID()
-
-	// 投递消息给 node 节点...
-
-	//ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
-	//g.proxy.deliver(ctx, cid, uid, data)
-	//cancel()
+func (node *Node) handleReceive(conn network.Conn, data []byte) {
+	innerMsg := &msg.InternalServerMsg{}
+	innerMsg.FromByteArray(data)
+	realData := innerMsg.MsgData
+	message, err := packet.Unpack(realData)
+	if err != nil {
+		log.Errorf("node handleReceive Unpack error: %v", err)
+		return
+	}
+	requestHandle, ok := node.Route[message.Route]
+	if !ok {
+		log.Errorf("handleReceive routeId not exist %d", message.Route)
+		return
+	}
+	// 处理消息
+	requestHandle(conn, innerMsg.UserId, innerMsg.ConnId, message.Buffer)
 }
 
-func (g *Node) debugPrint() {
-	log.Debugf("node server %s-%s startup successful", g.opts.id, g.opts.name)
-	log.Debugf("%s server listen on %s", g.opts.server.Protocol(), g.opts.server.Addr())
+func (node *Node) debugPrint() {
+	log.Debugf("node server %s-%s startup successful", node.opts.id, node.opts.name)
+	log.Debugf("%s server listen on %s", node.opts.server.Protocol(), node.opts.server.Addr())
 }
