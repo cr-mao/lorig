@@ -14,4 +14,11 @@ go get github.com/cr-mao/lorig@v0.0.0
 ```
 
 
-参考kratos,due框架,iam极客时间go语言项目实战
+
+
+
+参考
+- [kratos](https://github.com/go-kratos/kratos)
+- [due](https://github.com/dobyte/due)
+- [zinx](https://github.com/aceld/zinx)
+- [iam极客时间go语言项目实战](https://github.com/marmotedu/iam)

@@ -2,7 +2,6 @@ package lorig
 
 import (
 	"fmt"
-	"github.com/cr-mao/lorig/conf"
 	"os"
 	"os/signal"
 	"runtime"
@@ -10,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/cr-mao/lorig/component"
+	"github.com/cr-mao/lorig/conf"
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/utils/xfile"
 )
