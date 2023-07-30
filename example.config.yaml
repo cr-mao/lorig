@@ -15,10 +15,10 @@ app:
   pprof:
     addr: "0.0.0.0:13999"
 
-
 cluster:
   gate:
-    id: "gate1"
+    # 必须是数字
+    id: 1
     name: "gate_name1"
 
 db:
@@ -81,8 +81,10 @@ network:
       addr: "0.0.0.0:3553"
       maxConnNum: 30000
       heartbeatInterval: 10
-      # 网关服false， node服改成true
+      # 建议 网关服false， node服改成true
       handlerMsgAsync: false
+      # 是否发心跳给客户端 , 建议 网关服关闭， node 服开启
+      serverHearSend: false
 transport:
   grpc:
     server:

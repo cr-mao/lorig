@@ -14,8 +14,8 @@ var (
 )
 
 const (
-	Conn Kind = iota + 1 // 连接SESSION
-	User                 // 用户SESSION
+	Conn Kind = 1 // 连接SESSION
+	User Kind = 2 // 用户SESSION
 )
 
 type Kind int

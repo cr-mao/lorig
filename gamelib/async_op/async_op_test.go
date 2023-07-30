@@ -14,7 +14,7 @@ func LoginByPasswordAsync(userName string, password string) *AsyncBizResult {
 	}
 
 	bizResult := &AsyncBizResult{}
-	bindId := StrToBindId(userName)
+	bindId := StrToWorkId(userName)
 	Process(bindId, func() {
 		// 模拟获得用户数据
 		bizResult.SetReturnedObj("user_result")

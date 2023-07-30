@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"github.com/cr-mao/lorig/utils/xcall"
 	"net"
 	"sync"
 	"sync/atomic"
@@ -12,8 +13,8 @@ import (
 	"github.com/cr-mao/lorig/utils/xtime"
 )
 
-const oneSecond = 1000
-const readMsgCountPerSecond = 20
+//const oneSecond = 1000
+//const readMsgCountPerSecond = 20
 
 type serverConn struct {
 	rw                sync.RWMutex   // 锁
@@ -227,12 +228,13 @@ func (c *serverConn) forceClose() (err error) {
 
 // 读取消息
 func (c *serverConn) read() {
-	// todo defer recover
-	//defer func(){
-	//
-	//}()
-	t0 := int64(0)
-	counter := 0
+	defer func() {
+		if err := recover(); err != nil {
+			log.Errorf("read panic error: %v", err)
+		}
+	}()
+	//t0 := int64(0)
+	//counter := 0
 
 	for {
 		select {
@@ -247,18 +249,18 @@ func (c *serverConn) read() {
 				c.forceClose()
 				return
 			}
-			t1 := xtime.Now().UnixMilli()
-			if (t1 - t0) > oneSecond {
-				t0 = t1
-				counter = 0
-			}
-			// 1秒大于20个包
-			if counter >= readMsgCountPerSecond {
-				log.Error("消息过于频繁")
-				continue
-			}
-
-			counter++
+			//t1 := xtime.Now().UnixMilli()
+			//if (t1 - t0) > oneSecond {
+			//	t0 = t1
+			//	counter = 0
+			//}
+			//// 1秒大于20个包
+			//if counter >= readMsgCountPerSecond {
+			//	log.Error("消息过于频繁")
+			//	continue
+			//}
+			//
+			//counter++
 
 			if c.connMgr.server.opts.heartbeatInterval > 0 {
 				atomic.StoreInt64(&c.lastHeartbeatTime, xtime.Now().Unix())
@@ -277,7 +279,9 @@ func (c *serverConn) read() {
 
 			if c.connMgr.server.receiveHandler != nil {
 				if c.connMgr.server.opts.handleMsgAsync {
-					go c.connMgr.server.receiveHandler(c, msg)
+					xcall.Call(func() {
+						c.connMgr.server.receiveHandler(c, msg)
+					})
 				} else {
 					c.connMgr.server.receiveHandler(c, msg)
 				}
@@ -288,6 +292,13 @@ func (c *serverConn) read() {
 
 // 写入消息
 func (c *serverConn) write() {
+
+	defer func() {
+		if err := recover(); err != nil {
+			log.Errorf("write panic error: %v", err)
+		}
+	}()
+
 	var ticker *time.Ticker
 
 	if c.connMgr.server.opts.heartbeatInterval > 0 {
@@ -328,14 +339,14 @@ func (c *serverConn) write() {
 				log.Debugf("server connection heartbeat timeout")
 				c.forceClose()
 				return
-			} else {
+				//  心跳包 是否发送
+			} else if c.connMgr.server.opts.serverHearSend {
 				c.rw.RLock()
 
 				if atomic.LoadInt32(&c.state) == int32(network.ConnClosed) {
 					c.rw.RUnlock()
 					return
 				}
-				// todo  心跳包 服务器要不要发送的问题
 				// send heartbeat packet
 				err := write(c.conn, nil)
 				c.rw.RUnlock()

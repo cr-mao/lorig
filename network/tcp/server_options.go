@@ -11,6 +11,7 @@ const (
 	defaultServerMaxConnNum        = 5000
 	defaultServerHeartbeatInterval = 10
 	defaultHandlerMsgAsync         = false
+	defaultServerHearSend          = false
 )
 
 const (
@@ -18,6 +19,7 @@ const (
 	defaultServerMaxConnNumKey        = "network.tcp.server.maxConnNum"
 	defaultServerHeartbeatIntervalKey = "network.tcp.server.heartbeatInterval"
 	defaultHandlerMsgAsyncKey         = "network.tcp.server.handlerMsgAsync"
+	defaultServerHearSendKey          = "network.tcp.server.serverHearSend"
 )
 
 type ServerOption func(o *serverOptions)
@@ -27,6 +29,7 @@ type serverOptions struct {
 	maxConnNum        int           // 最大连接数，默认5000
 	heartbeatInterval time.Duration // 心跳检测间隔时间，默认10s
 	handleMsgAsync    bool
+	serverHearSend    bool
 }
 
 func defaultServerOptions() *serverOptions {
@@ -35,6 +38,7 @@ func defaultServerOptions() *serverOptions {
 		maxConnNum:        conf.GetInt(defaultServerMaxConnNumKey, defaultServerMaxConnNum),
 		heartbeatInterval: time.Duration(conf.GetInt(defaultServerHeartbeatIntervalKey, defaultServerHeartbeatInterval)) * time.Second,
 		handleMsgAsync:    conf.GetBool(defaultHandlerMsgAsyncKey, defaultHandlerMsgAsync),
+		serverHearSend:    conf.GetBool(defaultServerHearSendKey, defaultServerHearSend),
 	}
 }
 
@@ -55,4 +59,8 @@ func WithServerHeartbeatInterval(heartbeatInterval time.Duration) ServerOption {
 
 func WithServerHandlerMsgAsync(handlerMsgAsync bool) ServerOption {
 	return func(o *serverOptions) { o.handleMsgAsync = handlerMsgAsync }
+}
+
+func WithServerHearSend(serverHearSend bool) ServerOption {
+	return func(o *serverOptions) { o.serverHearSend = serverHearSend }
 }
