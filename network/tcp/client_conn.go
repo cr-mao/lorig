@@ -8,7 +8,6 @@ import (
 
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"
-	"github.com/cr-mao/lorig/utils/xnet"
 	"github.com/cr-mao/lorig/utils/xtime"
 )
 
@@ -23,6 +22,8 @@ type clientConn struct {
 	lastHeartbeatTime int64         // 上次心跳时间
 	done              chan struct{} // 写入完成信号
 	close             chan struct{} // 关闭信号
+	localAddr         string        // 当前链接的本地地址
+	remoteAddr        string        // 当前链接的远程地址
 }
 
 var _ network.Conn = &clientConn{}
@@ -37,6 +38,8 @@ func newClientConn(client *client, id int64, conn net.Conn) network.Conn {
 		lastHeartbeatTime: xtime.Now().Unix(),
 		done:              make(chan struct{}),
 		close:             make(chan struct{}),
+		localAddr:         conn.LocalAddr().String(),
+		remoteAddr:        conn.RemoteAddr().String(),
 	}
 
 	go c.read()
@@ -111,47 +114,33 @@ func (c *clientConn) Close(isForce ...bool) error {
 }
 
 // LocalIP 获取本地IP
-func (c *clientConn) LocalIP() (string, error) {
-	addr, err := c.LocalAddr()
+func (c *clientConn) LocalIP() string {
+	addr := c.LocalAddr()
+	ip, _, err := net.SplitHostPort(addr)
 	if err != nil {
-		return "", err
+		return "0.0.0.0"
 	}
-
-	return xnet.ExtractIP(addr)
+	return ip
 }
 
 // LocalAddr 获取本地地址
-func (c *clientConn) LocalAddr() (net.Addr, error) {
-	c.rw.RLock()
-	defer c.rw.RUnlock()
-
-	if err := c.checkState(); err != nil {
-		return nil, err
-	}
-
-	return c.conn.LocalAddr(), nil
+func (c *clientConn) LocalAddr() string {
+	return c.localAddr
 }
 
 // RemoteIP 获取远端IP
-func (c *clientConn) RemoteIP() (string, error) {
-	addr, err := c.RemoteAddr()
+func (c *clientConn) RemoteIP() string {
+	addr := c.RemoteAddr()
+	ip, _, err := net.SplitHostPort(addr)
 	if err != nil {
-		return "", err
+		return "0.0.0.0"
 	}
-
-	return xnet.ExtractIP(addr)
+	return ip
 }
 
 // RemoteAddr 获取远端地址
-func (c *clientConn) RemoteAddr() (net.Addr, error) {
-	c.rw.RLock()
-	defer c.rw.RUnlock()
-
-	if err := c.checkState(); err != nil {
-		return nil, err
-	}
-
-	return c.conn.RemoteAddr(), nil
+func (c *clientConn) RemoteAddr() string {
+	return c.remoteAddr
 }
 
 // 检测连接状态

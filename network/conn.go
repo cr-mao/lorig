@@ -2,7 +2,6 @@ package network
 
 import (
 	"github.com/cr-mao/lorig/errors"
-	"net"
 )
 
 const (
@@ -38,12 +37,12 @@ type (
 		// Close 关闭连接
 		Close(isForce ...bool) error
 		// LocalIP 获取本地IP
-		LocalIP() (string, error)
+		LocalIP() string
 		// LocalAddr 获取本地地址
-		LocalAddr() (net.Addr, error)
+		LocalAddr() string
 		// RemoteIP 获取远端IP
-		RemoteIP() (string, error)
+		RemoteIP() string
 		// RemoteAddr 获取远端地址
-		RemoteAddr() (net.Addr, error)
+		RemoteAddr() string
 	}
 )

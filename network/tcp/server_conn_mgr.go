@@ -1,10 +1,9 @@
 package tcp
 
 import (
+	"github.com/cr-mao/lorig/network"
 	"net"
 	"sync"
-
-	"github.com/cr-mao/lorig/network"
 )
 
 type serverConnMgr struct {
@@ -47,10 +46,12 @@ func (cm *serverConnMgr) allocate(c net.Conn) error {
 	cm.id++
 	id := cm.id
 	conn := cm.pool.Get().(*serverConn)
+	conn.id = id
+	conn.uid = 0
+	conn.state = int32(network.ConnOpened)
 	cm.conns[id] = conn
 	cm.mu.Unlock()
-
-	conn.init(id, c, cm)
+	conn.init(c, cm)
 
 	return nil
 }

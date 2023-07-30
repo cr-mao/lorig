@@ -43,16 +43,10 @@ func (np *nodeProxy) GetNodeServerConn() (network.Conn, error) {
 	}
 	tcpClient := tcp.NewClient(tcp.WithClientDialAddr("127.0.0.1:4001"), tcp.WithClientHeartbeatInterval(time.Second*2))
 	tcpClient.OnConnect(func(conn network.Conn) {
-		remoteNetAddr, err := conn.RemoteAddr()
-		if err != nil {
-			log.Infof("gateId:%d,connection node is opened,connId:%d", np.gate.opts.id, conn.ID())
-			return
-		}
-		log.Infof("gateId:%d, connection node is opened,connId:%d,node remoteAddr:%s", np.gate.opts.id, conn.ID(), remoteNetAddr.String())
+		log.Infof("gateId:%d, connection node is opened,connId:%d,node remoteAddr:%s", np.gate.opts.id, conn.ID(), conn.RemoteAddr())
 	})
-
 	tcpClient.OnDisconnect(func(conn network.Conn) {
-		log.Errorf("gateId:%d ,connection is Disconnect,connId:%d", np.gate.opts.id, conn.ID())
+		log.Infof("gateId:%d, connection node is Disconnect,connId:%d,node remoteAddr:%s", np.gate.opts.id, conn.ID(), conn.RemoteAddr())
 	})
 	tcpClient.OnReceive(func(conn network.Conn, data []byte) {
 		// 从业务服读消息,这里还有 组播，广播逻辑 ....

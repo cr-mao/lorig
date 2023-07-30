@@ -9,7 +9,6 @@ import (
 
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"
-	"github.com/cr-mao/lorig/utils/xnet"
 	"github.com/cr-mao/lorig/utils/xtime"
 )
 
@@ -27,6 +26,8 @@ type serverConn struct {
 	lastHeartbeatTime int64          // 上次心跳时间
 	done              chan struct{}  // 写入完成信号
 	close             chan struct{}  // 关闭信号
+	localAddr         string         // 当前链接的本地地址
+	remoteAddr        string         // 当前链接的远程地址
 }
 
 var _ network.Conn = &serverConn{}
@@ -92,47 +93,33 @@ func (c *serverConn) Close(isForce ...bool) error {
 }
 
 // LocalIP 获取本地IP
-func (c *serverConn) LocalIP() (string, error) {
-	addr, err := c.LocalAddr()
+func (c *serverConn) LocalIP() string {
+	addr := c.LocalAddr()
+	ip, _, err := net.SplitHostPort(addr)
 	if err != nil {
-		return "", err
+		return "0.0.0.0"
 	}
-
-	return xnet.ExtractIP(addr)
+	return ip
 }
 
 // LocalAddr 获取本地地址
-func (c *serverConn) LocalAddr() (net.Addr, error) {
-	c.rw.RLock()
-	defer c.rw.RUnlock()
-
-	if err := c.checkState(); err != nil {
-		return nil, err
-	}
-
-	return c.conn.LocalAddr(), nil
+func (c *serverConn) LocalAddr() string {
+	return c.localAddr
 }
 
 // RemoteIP 获取远端IP
-func (c *serverConn) RemoteIP() (string, error) {
-	addr, err := c.RemoteAddr()
+func (c *serverConn) RemoteIP() string {
+	addr := c.RemoteAddr()
+	ip, _, err := net.SplitHostPort(addr)
 	if err != nil {
-		return "", err
+		return "0.0.0.0"
 	}
-
-	return xnet.ExtractIP(addr)
+	return ip
 }
 
 // RemoteAddr 获取远端地址
-func (c *serverConn) RemoteAddr() (net.Addr, error) {
-	c.rw.RLock()
-	defer c.rw.RUnlock()
-
-	if err := c.checkState(); err != nil {
-		return nil, err
-	}
-
-	return c.conn.RemoteAddr(), nil
+func (c *serverConn) RemoteAddr() string {
+	return c.remoteAddr
 }
 
 // 检测连接状态
@@ -148,16 +135,15 @@ func (c *serverConn) checkState() error {
 }
 
 // 初始化连接
-func (c *serverConn) init(id int64, conn net.Conn, cm *serverConnMgr) {
-	c.id = id
+func (c *serverConn) init(conn net.Conn, cm *serverConnMgr) {
 	c.conn = conn
 	c.connMgr = cm
 	c.chWrite = make(chan chWrite, 1024)
 	c.done = make(chan struct{})
 	c.close = make(chan struct{})
 	c.lastHeartbeatTime = xtime.Now().Unix()
-	atomic.StoreInt64(&c.uid, 0)
-	atomic.StoreInt32(&c.state, int32(network.ConnOpened))
+	c.localAddr = conn.LocalAddr().String()
+	c.remoteAddr = conn.RemoteAddr().String()
 
 	go c.read()
 
