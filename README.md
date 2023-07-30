@@ -1,5 +1,6 @@
 # lori 
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/cr-mao/lorig.svg)](https://pkg.go.dev/github.com/cr-mao/lorig)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ### 1.介绍

@@ -14,7 +14,6 @@ import (
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"
 	"github.com/cr-mao/lorig/network/tcp"
-	"github.com/cr-mao/lorig/packet"
 )
 
 type nodeProxy struct {
@@ -73,17 +72,7 @@ func (np *nodeProxy) PushMsg(gateId int32, connId int64, userId int64, data []by
 		UserId:  userId,
 		MsgData: data,
 	}
-	// 内部使用seq 0 ,route 0
-	message, err := packet.Pack(&packet.Message{
-		Seq:    0,
-		Route:  0,
-		Buffer: innerMsg.ToByteArray(),
-	})
-	if err != nil {
-		log.Errorf("nodeProxy Pack msg error %+v", err)
-		return
-	}
-	err = nodeConn.Push(message)
+	err = nodeConn.Push(innerMsg.ToByteArray())
 	if err != nil {
 		log.Errorf("nodeProxy push msg error %+v", err)
 	}
