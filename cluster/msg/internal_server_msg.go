@@ -9,6 +9,15 @@ package msg
 import (
 	"bytes"
 	"encoding/binary"
+
+	"github.com/cr-mao/lorig/errors"
+)
+
+var (
+	ErrMessageEmpty   = errors.New("message empty")
+	ErrReadError      = errors.New("read error")
+	ErrInvalidMessage = errors.New("invalid message")
+	ErrBufferTooLarge = errors.New("buffer too large")
 )
 
 type InternalServerMsg struct {
@@ -18,22 +27,48 @@ type InternalServerMsg struct {
 	MsgData []byte // 原始数据
 }
 
-func (msg *InternalServerMsg) ToByteArray() []byte {
+func (msg *InternalServerMsg) Pack() ([]byte, error) {
+	// todo from config
+	if len(msg.MsgData) > 5000 {
+		return nil, nil
+	}
 	buff := bytes.NewBuffer([]byte{})
-	_ = binary.Write(buff, binary.BigEndian, msg.GateId)
-	_ = binary.Write(buff, binary.BigEndian, msg.ConnId)
-	_ = binary.Write(buff, binary.BigEndian, msg.UserId)
-	_ = binary.Write(buff, binary.BigEndian, msg.MsgData)
-	return buff.Bytes()
+	err := binary.Write(buff, binary.BigEndian, msg.GateId)
+	if err != nil {
+		return nil, err
+	}
+	err = binary.Write(buff, binary.BigEndian, msg.ConnId)
+	if err != nil {
+		return nil, err
+	}
+	err = binary.Write(buff, binary.BigEndian, msg.UserId)
+	if err != nil {
+		return nil, err
+	}
+	err = binary.Write(buff, binary.BigEndian, msg.MsgData)
+	if err != nil {
+		return nil, err
+	}
+	return buff.Bytes(), nil
 }
 
-func (msg *InternalServerMsg) FromByteArray(byteArray []byte) {
+func (msg *InternalServerMsg) UnPack(byteArray []byte) error {
 	if nil == byteArray || len(byteArray) <= 0 {
-		return
+		return ErrMessageEmpty
 	}
 	buff := bytes.NewBuffer(byteArray)
-	_ = binary.Read(buff, binary.BigEndian, &msg.GateId)
-	_ = binary.Read(buff, binary.BigEndian, &msg.ConnId)
-	_ = binary.Read(buff, binary.BigEndian, &msg.UserId)
+	err := binary.Read(buff, binary.BigEndian, &msg.GateId)
+	if err != nil {
+		return err
+	}
+	err = binary.Read(buff, binary.BigEndian, &msg.ConnId)
+	if err != nil {
+		return err
+	}
+	err = binary.Read(buff, binary.BigEndian, &msg.UserId)
+	if err != nil {
+		return err
+	}
 	msg.MsgData = buff.Bytes()
+	return nil
 }

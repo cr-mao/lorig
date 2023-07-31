@@ -112,7 +112,11 @@ func (g *Node) handleDisconnect(conn network.Conn) {
 // 处理接收到的消息
 func (node *Node) handleReceive(conn network.Conn, data []byte) {
 	innerMsg := &msg.InternalServerMsg{}
-	innerMsg.FromByteArray(data)
+	err := innerMsg.UnPack(data)
+	if err != nil {
+		log.Errorf("node handlerReceive error: %v", err)
+		return
+	}
 	realData := innerMsg.MsgData
 	message, err := packet.Unpack(realData)
 	if err != nil {

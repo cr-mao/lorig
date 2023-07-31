@@ -8,11 +8,12 @@ package gate
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/cr-mao/lorig/cluster/msg"
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"
 	"github.com/cr-mao/lorig/network/tcp"
-	"sync"
 )
 
 type nodeProxy struct {
@@ -66,7 +67,7 @@ func (np *nodeProxy) GetNodeServerConn() (network.Conn, error) {
 func (np *nodeProxy) PushMsg(gateId int32, connId int64, userId int64, data []byte) {
 	nodeConn, err := np.GetNodeServerConn()
 	if err != nil {
-		log.Error("node conn error")
+		log.Errorf("nodeProxy conn error:%+v", err)
 		return
 	}
 	innerMsg := &msg.InternalServerMsg{
@@ -75,7 +76,12 @@ func (np *nodeProxy) PushMsg(gateId int32, connId int64, userId int64, data []by
 		UserId:  userId,
 		MsgData: data, // message 结构体封包的数据
 	}
-	err = nodeConn.Push(innerMsg.ToByteArray())
+	newData, err := innerMsg.Pack()
+	if err != nil {
+		log.Errorf("nodeProxy Pack error %+v", err)
+		return
+	}
+	err = nodeConn.Push(newData)
 	if err != nil {
 		log.Errorf("nodeProxy push msg error %+v", err)
 	}
