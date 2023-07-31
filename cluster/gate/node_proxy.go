@@ -7,13 +7,12 @@ Desc: 业务服务器代理
 package gate
 
 import (
-	"sync"
-	"time"
-
+	"fmt"
 	"github.com/cr-mao/lorig/cluster/msg"
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"
 	"github.com/cr-mao/lorig/network/tcp"
+	"sync"
 )
 
 type nodeProxy struct {
@@ -40,7 +39,7 @@ func (np *nodeProxy) GetNodeServerConn() (network.Conn, error) {
 	if nil != nodeServerConn {
 		return nodeServerConn, nil
 	}
-	tcpClient := tcp.NewClient(tcp.WithClientDialAddr("127.0.0.1:4001"), tcp.WithClientHeartbeatInterval(time.Second*2))
+	tcpClient := tcp.NewClient()
 	tcpClient.OnConnect(func(conn network.Conn) {
 		log.Infof("gateId:%d, connection node is opened,connId:%d,node remoteAddr:%s", np.gate.opts.id, conn.ID(), conn.RemoteAddr())
 	})
@@ -49,13 +48,13 @@ func (np *nodeProxy) GetNodeServerConn() (network.Conn, error) {
 	})
 	tcpClient.OnReceive(func(conn network.Conn, data []byte) {
 
+		fmt.Println("网关收到业务服务器发来的的消息", string(data))
 		// 从业务服读消息,这里还有 组播，广播逻辑 ....
 		//innerMsg := &msg.InternalServerMsg{}
 		//innerMsg.FromByteArray(data)
 		//userId := innerMsg.
 		//np.gate.session.Push()
 		//fmt.Println(innerMsg.UserId)
-
 	})
 
 	return tcpClient.Dial()
@@ -72,7 +71,7 @@ func (np *nodeProxy) PushMsg(gateId int32, connId int64, userId int64, data []by
 		GateId:  gateId,
 		ConnId:  connId,
 		UserId:  userId,
-		MsgData: data,
+		MsgData: data, // message 结构体封包的数据
 	}
 	err = nodeConn.Push(innerMsg.ToByteArray())
 	if err != nil {

@@ -8,7 +8,6 @@ package node
 
 import (
 	"context"
-
 	"github.com/cr-mao/lorig/cluster/msg"
 	"github.com/cr-mao/lorig/component"
 	"github.com/cr-mao/lorig/log"
@@ -102,12 +101,12 @@ func (g *Node) stopNetworkServer() {
 
 // 处理连接打开
 func (g *Node) handleConnect(conn network.Conn) {
-
+	log.Infof("有连接进来 %s", conn.RemoteAddr())
 }
 
 // 处理断开连接
 func (g *Node) handleDisconnect(conn network.Conn) {
-
+	log.Infof("有连接断开 %s", conn.RemoteAddr())
 }
 
 // 处理接收到的消息
@@ -130,6 +129,6 @@ func (node *Node) handleReceive(conn network.Conn, data []byte) {
 }
 
 func (node *Node) debugPrint() {
-	log.Debugf("node server %s-%s startup successful", node.opts.id, node.opts.name)
+	log.Debugf("node server %d-%s startup successful", node.opts.id, node.opts.name)
 	log.Debugf("%s server listen on %s", node.opts.server.Protocol(), node.opts.server.Addr())
 }

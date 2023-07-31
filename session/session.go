@@ -1,7 +1,7 @@
 package session
 
 import (
-	"net"
+	"github.com/cr-mao/lorig/log"
 	"sync"
 
 	"github.com/cr-mao/lorig/errors"
@@ -105,52 +105,54 @@ func (s *Session) Unbind(uid int64) (int64, error) {
 }
 
 // LocalIP 获取本地IP
-func (s *Session) LocalIP(kind Kind, target int64) (string, error) {
+func (s *Session) LocalIP(kind Kind, target int64) string {
 	s.rw.RLock()
 	defer s.rw.RUnlock()
 
 	conn, err := s.conn(kind, target)
 	if err != nil {
-		return "", err
+		log.Errorf("session LocalIP error %+v", err)
+		return ""
 	}
 
 	return conn.LocalIP()
 }
 
 // LocalAddr 获取本地地址
-func (s *Session) LocalAddr(kind Kind, target int64) (net.Addr, error) {
+func (s *Session) LocalAddr(kind Kind, target int64) string {
 	s.rw.RLock()
 	defer s.rw.RUnlock()
-
 	conn, err := s.conn(kind, target)
 	if err != nil {
-		return nil, err
+		log.Errorf("session LocalAddr error %+v", err)
+		return ""
 	}
-
 	return conn.LocalAddr()
 }
 
 // RemoteIP 获取远端IP
-func (s *Session) RemoteIP(kind Kind, target int64) (string, error) {
+func (s *Session) RemoteIP(kind Kind, target int64) string {
 	s.rw.RLock()
 	defer s.rw.RUnlock()
 
 	conn, err := s.conn(kind, target)
 	if err != nil {
-		return "", err
+		log.Errorf("session RemoteIP error %+v", err)
+		return ""
 	}
 
 	return conn.RemoteIP()
 }
 
 // RemoteAddr 获取远端地址
-func (s *Session) RemoteAddr(kind Kind, target int64) (net.Addr, error) {
+func (s *Session) RemoteAddr(kind Kind, target int64) string {
 	s.rw.RLock()
 	defer s.rw.RUnlock()
 
 	conn, err := s.conn(kind, target)
 	if err != nil {
-		return nil, err
+		log.Errorf("session RemoteAddr error %+v", err)
+		return ""
 	}
 
 	return conn.RemoteAddr()

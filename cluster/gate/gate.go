@@ -127,7 +127,7 @@ func (g *Gate) handleReceive(conn network.Conn, data []byte) {
 }
 
 func (g *Gate) debugPrint() {
-	log.Debugf("gate server %s-%s startup successful", g.opts.id, g.opts.name)
+	log.Debugf("gate server %d-%s startup successful", g.opts.id, g.opts.name)
 	log.Debugf("%s server listen on %s", g.opts.server.Protocol(), g.opts.server.Addr())
 	//log.Debugf("%s server listen on %s", g.rpc.Scheme(), g.rpc.Addr())
 }

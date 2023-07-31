@@ -12,8 +12,8 @@ const (
 )
 
 const (
-	defaultClientDialAddrKey          = "tcp.client.addr"
-	defaultClientHeartbeatIntervalKey = "tcp.client.heartbeatInterval"
+	defaultClientDialAddrKey          = "network.tcp.client.addr"
+	defaultClientHeartbeatIntervalKey = "network.tcp.client.heartbeatInterval"
 )
 
 type ClientOption func(o *clientOptions)

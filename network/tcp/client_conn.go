@@ -282,7 +282,7 @@ func (c *clientConn) write() {
 				log.Errorf("write message error: %v", err)
 			}
 		case <-ticker.C:
-			deadline := xtime.Now().Add(-2 * c.client.opts.heartbeatInterval).Unix()
+			deadline := xtime.Now().Add(-3 * c.client.opts.heartbeatInterval).Unix()
 			if atomic.LoadInt64(&c.lastHeartbeatTime) < deadline {
 				log.Debugf("connection heartbeat timeout")
 				c.forceClose()
