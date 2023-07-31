@@ -48,18 +48,20 @@ func (np *nodeProxy) GetNodeServerConn() (network.Conn, error) {
 		log.Infof("gateId:%d, connection node is Disconnect,connId:%d,node remoteAddr:%s", np.gate.opts.id, conn.ID(), conn.RemoteAddr())
 	})
 	tcpClient.OnReceive(func(conn network.Conn, data []byte) {
-		// 从业务服读消息,这里还有 组播，广播逻辑 ....
 
+		// 从业务服读消息,这里还有 组播，广播逻辑 ....
 		//innerMsg := &msg.InternalServerMsg{}
 		//innerMsg.FromByteArray(data)
 		//userId := innerMsg.
 		//np.gate.session.Push()
 		//fmt.Println(innerMsg.UserId)
+
 	})
 
 	return tcpClient.Dial()
 }
 
+// 网关投递消息到业务服务器
 func (np *nodeProxy) PushMsg(gateId int32, connId int64, userId int64, data []byte) {
 	nodeConn, err := np.GetNodeServerConn()
 	if err != nil {

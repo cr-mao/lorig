@@ -105,6 +105,8 @@ func (g *Gate) handleConnect(conn network.Conn) {
 func (g *Gate) handleDisconnect(conn network.Conn) {
 	g.session.RemConn(conn)
 
+	// 断链推送 给 业务服务器....
+
 	//if cid, uid := conn.ID(), conn.UID(); uid != 0 {
 	//	ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
 	//	_ = g.proxy.unbindGate(ctx, cid, uid)
