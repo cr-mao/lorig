@@ -4,3 +4,7 @@
 **/*.log
 **/*.pid
 **/*.txt
+
+develop/etcd/data
+
+*

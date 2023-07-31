@@ -1,7 +1,7 @@
 package net_test
 
 import (
-	"lorigame/loric/internal/net"
+	"github.com/cr-mao/lorig/internal/net"
 	"testing"
 )
 
