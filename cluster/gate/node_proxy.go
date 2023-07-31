@@ -44,6 +44,8 @@ func (np *nodeProxy) GetNodeServerConn() (network.Conn, error) {
 		log.Infof("gateId:%d, connection node is opened,connId:%d,node remoteAddr:%s", np.gate.opts.id, conn.ID(), conn.RemoteAddr())
 	})
 	tcpClient.OnDisconnect(func(conn network.Conn) {
+
+		// 发往飞书 要......
 		log.Infof("gateId:%d, connection node is Disconnect,connId:%d,node remoteAddr:%s", np.gate.opts.id, conn.ID(), conn.RemoteAddr())
 	})
 	tcpClient.OnReceive(func(conn network.Conn, data []byte) {

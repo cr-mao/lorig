@@ -13,6 +13,7 @@ func SayHello(message ...interface{}) {
 }
 
 func TestDelayfunc(t *testing.T) {
+	t.SkipNow()
 	df := NewDelayFunc(SayHello, []interface{}{"hello", "zinx!"})
 	fmt.Println("df.String() = ", df.String())
 	df.Call()

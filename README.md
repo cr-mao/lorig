@@ -19,11 +19,11 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 
 - 网关：tcp协议的网关服务器
 - 日志：基于zap
-- 服务发现注册：基于etcd
+- 服务发现注册：基于etcd(todo)
 - 协议：支持protobuf、json
 - 配置: 基于viper
 - 游戏常用技术(见gamelib):异步操作 、定时任务及守护任务 、延迟保存、时间轮
-
+- 热更(todo)
 
 ### 4.协议
 

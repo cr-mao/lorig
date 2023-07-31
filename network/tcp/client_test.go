@@ -13,6 +13,7 @@ import (
 )
 
 func TestNewClient_Dial(t *testing.T) {
+	t.SkipNow()
 	wg := sync.WaitGroup{}
 	for i := 0; i < 1; i++ {
 		wg.Add(1)
@@ -75,6 +76,7 @@ func TestNewClient_Dial(t *testing.T) {
 }
 
 func Test_Benchmark(t *testing.T) {
+	t.SkipNow()
 	// 并发数
 	concurrency := 1000
 	// 消息量

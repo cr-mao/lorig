@@ -62,8 +62,8 @@ func startSave() {
 
 				currRecord := val.(*lazySaveRecord)
 
-				if nowTime-currRecord.lastUpdateTime < 20000 {
-					// 如果时间差小于 20 秒
+				if nowTime-currRecord.lastUpdateTime < 10000 {
+					// 如果时间差小于 10 秒
 					// 不进行保存
 					return true
 				}

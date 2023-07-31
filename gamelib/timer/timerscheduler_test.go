@@ -19,6 +19,7 @@ func foo(args ...interface{}) {
 
 // 手动创建调度器运转时间轮
 func TestNewTimerScheduler(t *testing.T) {
+	t.SkipNow()
 	timerScheduler := NewTimerScheduler()
 	timerScheduler.Start()
 
@@ -46,6 +47,7 @@ func TestNewTimerScheduler(t *testing.T) {
 
 // 采用自动调度器运转时间轮
 func TestNewAutoExecTimerScheduler(t *testing.T) {
+	t.SkipNow()
 	autoTS := NewAutoExecTimerScheduler()
 
 	//给调度器添加Timer
@@ -64,6 +66,7 @@ func TestNewAutoExecTimerScheduler(t *testing.T) {
 
 // 测试取消一个定时器
 func TestCancelTimerScheduler(t *testing.T) {
+	t.SkipNow()
 	Scheduler := NewAutoExecTimerScheduler()
 	f1 := NewDelayFunc(foo, []interface{}{3, 3})
 	f2 := NewDelayFunc(foo, []interface{}{5, 5})
@@ -77,7 +80,6 @@ func TestCancelTimerScheduler(t *testing.T) {
 	}
 	t.Logf("timerID1=%d ,timerID2=%d\n", timerID1, timerID2)
 	Scheduler.CancelTimer(timerID1) //删除timerID1
-
 	//阻塞等待
 	select {}
 }

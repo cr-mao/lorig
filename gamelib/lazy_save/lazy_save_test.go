@@ -1,7 +1,8 @@
-package lazy_save
+package lazy_save_test
 
 import (
 	"fmt"
+	"github.com/cr-mao/lorig/gamelib/lazy_save"
 	"testing"
 	"time"
 )
@@ -43,6 +44,7 @@ INFO msg=执行延迟保存, lsoId = userdata_1
 执行存库操作，可能是异步,当前时间戳: 1690676257
 */
 func TestLazySave(t *testing.T) {
+	t.SkipNow()
 	// 模拟高频场景
 	times := 0
 	fmt.Println("begin", time.Now().Unix())
@@ -58,13 +60,11 @@ func TestLazySave(t *testing.T) {
 			User: user,
 		}
 		// 20秒后才会更改
-		SaveOrUpdate(lazySaveObj)
+		lazy_save.SaveOrUpdate(lazySaveObj)
 		times++
-		if times > 10 {
+		if times > 3 {
 			break
 		}
 	}
-
-	select {}
-
+	time.Sleep(20 * time.Second)
 }

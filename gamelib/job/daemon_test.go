@@ -14,13 +14,13 @@ func TestDaemonJob(t *testing.T) {
 				result++
 				return nil
 			},
-			Rate: time.Second * 5,
+			Rate: time.Second * 2,
 		}
 		daemonJob.Run(context.Background())
 	}()
 
 	ticker := time.NewTicker(time.Second)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*31)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 END:
 	for {
