@@ -1,5 +1,6 @@
 # lori 
 
+[![Build Status](https://github.com/cr-mao/lorig/workflows/Go/badge.svg)](https://github.com/cr-mao/lorig/actions)
 [![Go Reference](https://pkg.go.dev/badge/github.com/cr-mao/lorig.svg)](https://pkg.go.dev/github.com/cr-mao/lorig)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
