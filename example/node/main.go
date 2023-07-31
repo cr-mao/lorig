@@ -8,13 +8,14 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
+
 	"github.com/cr-mao/lorig"
 	"github.com/cr-mao/lorig/cluster/node"
 	"github.com/cr-mao/lorig/conf"
 	"github.com/cr-mao/lorig/network"
 	"github.com/cr-mao/lorig/network/tcp"
-	"math/rand"
-	"time"
 )
 
 // 登录

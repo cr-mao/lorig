@@ -6,6 +6,7 @@ package gate
 
 import (
 	"context"
+
 	"github.com/cr-mao/lorig/component"
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"

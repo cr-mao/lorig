@@ -7,12 +7,13 @@ Desc: main.go
 package main
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/cr-mao/lorig"
 	"github.com/cr-mao/lorig/cluster/gate"
 	"github.com/cr-mao/lorig/conf"
 	"github.com/cr-mao/lorig/network/tcp"
-	"math/rand"
-	"time"
 )
 
 func main() {

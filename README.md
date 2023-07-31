@@ -7,6 +7,8 @@
 ### 1.介绍
 lorig 是一款基于golang的分布式游戏服务器框架
 
+![](gamestruct.png)
+
 ### 2.安装项目和依赖工具
 ```shell
 go get github.com/cr-mao/lorig@v0.0.0

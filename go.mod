@@ -8,6 +8,10 @@ require (
 	github.com/spf13/viper v1.12.0
 	go.uber.org/zap v1.20.0
 	google.golang.org/grpc v1.46.2
+
+
+	go.etcd.io/etcd/api/v3 v3.5.9
+	go.etcd.io/etcd/client/v3 v3.5.9
 )
 
 require (

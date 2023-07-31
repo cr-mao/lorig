@@ -10,15 +10,19 @@ import (
 	"bytes"
 	"encoding/binary"
 
+	"github.com/cr-mao/lorig/conf"
 	"github.com/cr-mao/lorig/errors"
 )
 
 var (
-	ErrMessageEmpty   = errors.New("message empty")
-	ErrReadError      = errors.New("read error")
-	ErrInvalidMessage = errors.New("invalid message")
-	ErrBufferTooLarge = errors.New("buffer too large")
+	ErrMessageEmpty = errors.New("message empty")
 )
+
+var maxMessageSize = 5004
+
+func init() {
+	maxMessageSize = conf.GetInt("packet.bufferBytes", 5000) + 4
+}
 
 type InternalServerMsg struct {
 	GateId  int32  // 在业务服 GateId_ConnId 做唯一id  用
@@ -29,7 +33,7 @@ type InternalServerMsg struct {
 
 func (msg *InternalServerMsg) Pack() ([]byte, error) {
 	// todo from config
-	if len(msg.MsgData) > 5000 {
+	if len(msg.MsgData) > maxMessageSize {
 		return nil, nil
 	}
 	buff := bytes.NewBuffer([]byte{})
