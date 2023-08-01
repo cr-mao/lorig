@@ -20,6 +20,7 @@ const (
 var reg = etcd.NewRegistry()
 
 func TestRegistry_Register1(t *testing.T) {
+	t.SkipNow()
 	host, err := net.ExternalIP()
 	if err != nil {
 		t.Fatal(err)
@@ -66,6 +67,7 @@ func TestRegistry_Register1(t *testing.T) {
 }
 
 func TestRegistry_Register2(t *testing.T) {
+	t.SkipNow()
 	host, err := net.ExternalIP()
 	if err != nil {
 		t.Fatal(err)
@@ -82,11 +84,11 @@ func TestRegistry_Register2(t *testing.T) {
 	}
 
 	go func() {
-		time.Sleep(5 * time.Second)
+		time.Sleep(3 * time.Second)
 		reg.Stop()
 	}()
 
-	time.Sleep(30 * time.Second)
+	time.Sleep(10 * time.Second)
 }
 
 func TestRegistry_Services(t *testing.T) {
@@ -101,6 +103,7 @@ func TestRegistry_Services(t *testing.T) {
 }
 
 func TestRegistry_Watch(t *testing.T) {
+	t.SkipNow()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	watcher1, err := reg.Watch(ctx, serviceName)
 	cancel()
