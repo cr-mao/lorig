@@ -80,25 +80,25 @@ func (np *proxy) GetNodeServerConn() (network.Conn, error) {
 		//fmt.Println(innerMsg.UserId)
 
 		// 登录的时候，第一次给上userId
-		if conn.UID() <= 0 && innerMsg.UserId > 0 {
-			np.gate.session.Bind(innerMsg.ConnId, innerMsg.UserId)
-
-			err := p.gate.session.Bind(cid, uid)
-			if err != nil {
-				return err
-			}
-
-			err = p.gate.proxy.bindGate(ctx, cid, uid)
-			if err != nil {
-				_, _ = p.gate.session.Unbind(uid)
-			}
-
-			err := p.gate.opts.locator.Set(ctx, uid, cluster.Gate, p.gate.opts.id)
-			if err != nil {
-				return err
-			}
-
-		}
+		//if conn.UID() <= 0 && innerMsg.UserId > 0 {
+		//	np.gate.session.Bind(innerMsg.ConnId, innerMsg.UserId)
+		//
+		//	err := p.gate.session.Bind(cid, uid)
+		//	if err != nil {
+		//		return err
+		//	}
+		//
+		//	err = p.gate.proxy.bindGate(ctx, cid, uid)
+		//	if err != nil {
+		//		_, _ = p.gate.session.Unbind(uid)
+		//	}
+		//
+		//	err := p.gate.opts.locator.Set(ctx, uid, cluster.Gate, p.gate.opts.id)
+		//	if err != nil {
+		//		return err
+		//	}
+		//
+		//}
 
 		fmt.Println("网关收到业务服务器发来的的消息", string(data))
 		// 从业务服读消息,这里还有 组播，广播逻辑 ....

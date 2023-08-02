@@ -30,7 +30,6 @@ func NewNode(opts ...Option) *Node {
 	for _, opt := range opts {
 		opt(o)
 	}
-
 	node := &Node{}
 	node.opts = o
 	//node.session = session.NewSession()
@@ -52,11 +51,10 @@ func (node *Node) Name() string {
 // Init 初始化
 func (node *Node) Init() {
 	if node.opts.id == 0 {
-		log.Fatal("instance id can not be empty")
+		log.Fatal("instance node id can not be empty")
 	}
-
 	if node.opts.server == nil {
-		log.Fatal("server component is not injected")
+		log.Fatal("node server component is not injected")
 	}
 }
 
@@ -67,7 +65,6 @@ func (node *Node) Start() {
 	//g.registerServiceInstance()
 	//
 	//g.proxy.watch(g.ctx)
-
 	node.debugPrint()
 }
 
@@ -84,7 +81,6 @@ func (g *Node) startNetworkServer() {
 	g.opts.server.OnConnect(g.handleConnect)
 	g.opts.server.OnDisconnect(g.handleDisconnect)
 	g.opts.server.OnReceive(g.handleReceive)
-
 	if err := g.opts.server.Start(); err != nil {
 		log.Fatalf("network server start failed: %v", err)
 	}
@@ -99,12 +95,13 @@ func (g *Node) stopNetworkServer() {
 
 // 处理连接打开
 func (g *Node) handleConnect(conn network.Conn) {
-	log.Infof("有连接进来 %s", conn.RemoteAddr())
+	log.Infof("有连接进来 remoteAddr:%s,localAddr", conn.RemoteAddr(), conn.LocalAddr())
 }
 
 // 处理断开连接
 func (g *Node) handleDisconnect(conn network.Conn) {
-	log.Infof("有连接断开 %s", conn.RemoteAddr())
+	//todo  看看是否要报警处理.... 因为这个是内部的连接
+	log.Infof("有连接进来 remoteAddr:%s,localAddr", conn.RemoteAddr(), conn.LocalAddr())
 }
 
 // 处理接收到的消息
@@ -113,6 +110,11 @@ func (node *Node) handleReceive(conn network.Conn, data []byte) {
 	err := innerMsg.UnPack(data)
 	if err != nil {
 		log.Errorf("node handlerReceive error: %v", err)
+		return
+	}
+	// 断连处理
+	if innerMsg.EventType == cluster.Disconnect {
+
 		return
 	}
 
