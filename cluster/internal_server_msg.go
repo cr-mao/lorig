@@ -4,7 +4,7 @@ Date: 2023/7/30
 Time: 18:40
 Desc: 网关和业务服务器到通信结构
 */
-package msg
+package cluster
 
 import (
 	"bytes"
@@ -24,15 +24,16 @@ func init() {
 	maxMessageSize = conf.GetInt("packet.bufferBytes", 5000) + 4
 }
 
+// 网关和node 通信结构
 type InternalServerMsg struct {
-	GateId  int32  // 在业务服 GateId_ConnId 做唯一id  用
-	ConnId  int64  // 网关的连接id
-	UserId  int64  // 网关,业务服务器 用户id，网关可以是0， 业务服返回的肯定是知道哪个用户id的。
-	MsgData []byte // 原始数据
+	GateId    int32  // 在业务服 GateId_ConnId 做唯一id  用
+	ConnId    int64  // 网关的连接id
+	UserId    int64  // 网关,业务服务器 用户id，网关可以是0， 业务服返回的肯定是知道哪个用户id的。
+	EventType Event  // 事件类型
+	MsgData   []byte // 原始数据
 }
 
 func (msg *InternalServerMsg) Pack() ([]byte, error) {
-	// todo from config
 	if len(msg.MsgData) > maxMessageSize {
 		return nil, nil
 	}
@@ -46,6 +47,10 @@ func (msg *InternalServerMsg) Pack() ([]byte, error) {
 		return nil, err
 	}
 	err = binary.Write(buff, binary.BigEndian, msg.UserId)
+	if err != nil {
+		return nil, err
+	}
+	err = binary.Write(buff, binary.BigEndian, msg.EventType)
 	if err != nil {
 		return nil, err
 	}
@@ -70,6 +75,10 @@ func (msg *InternalServerMsg) UnPack(byteArray []byte) error {
 		return err
 	}
 	err = binary.Read(buff, binary.BigEndian, &msg.UserId)
+	if err != nil {
+		return err
+	}
+	err = binary.Read(buff, binary.BigEndian, &msg.EventType)
 	if err != nil {
 		return err
 	}

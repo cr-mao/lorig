@@ -6,7 +6,7 @@ package node
 
 import (
 	"context"
-	"github.com/cr-mao/lorig/cluster/msg"
+	"github.com/cr-mao/lorig/cluster"
 	"github.com/cr-mao/lorig/component"
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"
@@ -109,18 +109,20 @@ func (g *Node) handleDisconnect(conn network.Conn) {
 
 // 处理接收到的消息
 func (node *Node) handleReceive(conn network.Conn, data []byte) {
-	innerMsg := &msg.InternalServerMsg{}
+	innerMsg := &cluster.InternalServerMsg{}
 	err := innerMsg.UnPack(data)
 	if err != nil {
 		log.Errorf("node handlerReceive error: %v", err)
 		return
 	}
+
 	realData := innerMsg.MsgData
 	message, err := packet.Unpack(realData)
 	if err != nil {
 		log.Errorf("node handleReceive Unpack error: %v", err)
 		return
 	}
+
 	requestHandle, ok := node.Route[message.Route]
 	if !ok {
 		log.Errorf("handleReceive routeId not exist %d", message.Route)

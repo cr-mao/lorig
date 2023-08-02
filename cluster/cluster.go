@@ -22,7 +22,8 @@ const (
 type Event int
 
 const (
-	Connect    Event = iota + 1 // 打开连接
-	Reconnect                   // 断线重连
-	Disconnect                  // 断开连接
+	Send       Event = 0 //  正常收发数据
+	Connect    Event = 1 //   打开连接
+	Reconnect  Event = 2 //   断线重连
+	Disconnect Event = 3 //   断开连接
 )

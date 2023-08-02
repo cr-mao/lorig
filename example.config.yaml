@@ -20,6 +20,8 @@ cluster:
     # 必须是数字
     id: 1
     name: "gate_name1"
+    # redis 定位器超时时间
+    timeout: 3
 
 db:
   # 数据库配置

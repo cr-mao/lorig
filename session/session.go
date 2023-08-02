@@ -284,6 +284,29 @@ func (s *Session) Stat(kind Kind) (int64, error) {
 
 // 获取会话
 func (s *Session) conn(kind Kind, target int64) (network.Conn, error) {
+
+	switch kind {
+	case Conn:
+		conn, ok := s.conns[target]
+		if !ok {
+			return nil, ErrNotFoundSession
+		}
+		return conn, nil
+	case User:
+		conn, ok := s.users[target]
+		if !ok {
+			return nil, ErrNotFoundSession
+		}
+		return conn, nil
+	default:
+		return nil, ErrInvalidSessionKind
+	}
+}
+
+// 获取会话
+func (s *Session) Conn(kind Kind, target int64) (network.Conn, error) {
+	s.rw.RLock()
+	defer s.rw.RUnlock()
 	switch kind {
 	case Conn:
 		conn, ok := s.conns[target]

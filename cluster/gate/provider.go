@@ -1,48 +1,53 @@
 package gate
 
-//import (
-//	"context"
-//	"lorigame/loric/packet"
-//	"lorigame/loric/session"
-//)
-//
-//type provider struct {
-//	gate *Gate
-//}
-//
-//// Bind 绑定用户与网关间的关系
-//func (p *provider) Bind(ctx context.Context, cid, uid int64) error {
-//	if cid <= 0 || uid <= 0 {
-//		return ErrInvalidArgument
-//	}
-//
-//	err := p.gate.session.Bind(cid, uid)
-//	if err != nil {
-//		return err
-//	}
-//
-//	err = p.gate.proxy.bindGate(ctx, cid, uid)
-//	if err != nil {
-//		_, _ = p.gate.session.Unbind(uid)
-//	}
-//
-//	return err
-//}
-//
-//// Unbind 解绑用户与网关间的关系
-//func (p *provider) Unbind(ctx context.Context, uid int64) error {
-//	if uid == 0 {
-//		return ErrInvalidArgument
-//	}
-//
-//	cid, err := p.gate.session.Unbind(uid)
-//	if err != nil {
-//		return err
-//	}
-//
-//	return p.gate.proxy.unbindGate(ctx, cid, uid)
-//}
-//
+import (
+	"context"
+	"github.com/cr-mao/lorig/errors"
+)
+
+var (
+	ErrInvalidArgument = errors.New("invalid argument")
+)
+
+type provider struct {
+	gate *Gate
+}
+
+func newProvider(gate *Gate) *provider {
+	return &provider{
+		gate: gate,
+	}
+}
+
+// Bind 绑定用户与网关间的关系
+func (p *provider) Bind(ctx context.Context, cid, uid int64) error {
+	if cid <= 0 || uid <= 0 {
+		return ErrInvalidArgument
+	}
+
+	err := p.gate.session.Bind(cid, uid)
+	if err != nil {
+		return err
+	}
+	err = p.gate.proxy.bindGate(ctx, cid, uid)
+	if err != nil {
+		_, _ = p.gate.session.Unbind(uid)
+	}
+	return err
+}
+
+// Unbind 解绑用户与网关间的关系
+func (p *provider) Unbind(ctx context.Context, uid int64) error {
+	if uid == 0 {
+		return ErrInvalidArgument
+	}
+	cid, err := p.gate.session.Unbind(uid)
+	if err != nil {
+		return err
+	}
+	return p.gate.proxy.unbindGate(ctx, cid, uid)
+}
+
 //// GetIP 获取客户端IP地址
 //func (p *provider) GetIP(ctx context.Context, kind session.Kind, target int64) (string, error) {
 //	return p.gate.session.RemoteIP(kind, target)
@@ -76,7 +81,6 @@ package gate
 //	if err != nil {
 //		return 0, err
 //	}
-//
 //	return p.gate.session.Multicast(kind, targets, msg)
 //}
 //
@@ -86,7 +90,6 @@ package gate
 //	if err != nil {
 //		return 0, err
 //	}
-//
 //	return p.gate.session.Broadcast(kind, msg)
 //}
 //
