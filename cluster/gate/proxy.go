@@ -59,8 +59,8 @@ func (np *proxy) GetNodeServerConn() (network.Conn, error) {
 	tcpClient.OnReceive(func(conn network.Conn, data []byte) {
 		innerMsg := &cluster.InternalServerMsg{}
 		innerMsg.UnPack(data)
-		log.Info("tcp client 收到 connid :", innerMsg.ConnId)
-		log.Info("tcp client 收到 userid:", innerMsg.UserId)
+		//log.Info("tcp client 收到 connid :", innerMsg.ConnId)
+		//log.Info("tcp client 收到 userid:", innerMsg.UserId)
 		gateConn, err := np.gate.session.Conn(session.Conn, innerMsg.ConnId)
 		if err != nil {
 			log.Errorf("get conn by connid err:%+v", err)
@@ -70,10 +70,10 @@ func (np *proxy) GetNodeServerConn() (network.Conn, error) {
 		defer cancel()
 		// 第一次绑定用户
 		if gateConn.UID() <= 0 && innerMsg.UserId > 0 {
-			log.Infof("userId:%d, 绑定session", innerMsg.UserId)
+			//log.Infof("userId:%d, 绑定session", innerMsg.UserId)
 			err = np.gate.provider.Bind(ctx, innerMsg.ConnId, innerMsg.UserId)
 			if err != nil {
-				log.Errorf("")
+				log.Error(err)
 				return
 			}
 		}
@@ -123,9 +123,9 @@ func (np *proxy) unbindGate(ctx context.Context, connId int64, userId int64) err
 	return err
 }
 
-// 绑定用户与网关间的关系
+// 绑定用户与网关间的关系 todo 确定下放在哪在哪里 合适。
 func (p *proxy) bindGate(ctx context.Context, cid, uid int64) error {
-	log.Infof("location gate :%d 绑定:%d", p.gate.opts.id, uid)
+	// 这里有性能问题
 	err := p.gate.opts.location.Set(ctx, uid, cluster.Gate, xconv.Int32ToString(p.gate.opts.id))
 	if err != nil {
 		return err

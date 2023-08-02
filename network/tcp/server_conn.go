@@ -1,7 +1,6 @@
 package tcp
 
 import (
-	"fmt"
 	"github.com/cr-mao/lorig/utils/xcall"
 	"net"
 	"sync"
@@ -53,7 +52,7 @@ func (c *serverConn) Unbind() {
 	atomic.StoreInt64(&c.uid, 0)
 }
 
-// Send 发送消息（同步）
+// Send 发送消息（同步）,废弃
 func (c *serverConn) Send(msg []byte) error {
 	c.rw.RLock()
 	defer c.rw.RUnlock()
@@ -289,7 +288,6 @@ func (c *serverConn) write() {
 	var ticker *time.Ticker
 
 	if c.connMgr.server.opts.heartbeatInterval > 0 {
-		fmt.Println("心跳时间", c.connMgr.server.opts.heartbeatInterval)
 		ticker = time.NewTicker(c.connMgr.server.opts.heartbeatInterval)
 		defer ticker.Stop()
 	} else {
@@ -303,26 +301,25 @@ func (c *serverConn) write() {
 				return
 			}
 
-			c.rw.RLock()
+			//c.rw.RLock()
 			if r.typ == closeSig {
 				c.done <- struct{}{}
-				c.rw.RUnlock()
+				//c.rw.RUnlock()
 				return
 			}
 
 			if atomic.LoadInt32(&c.state) == int32(network.ConnClosed) {
-				c.rw.RUnlock()
+				//c.rw.RUnlock()
 				return
 			}
 
 			err := write(c.conn, r.msg)
-			c.rw.RUnlock()
+			//c.rw.RUnlock()
 
 			if err != nil {
 				log.Errorf("write message error: %v", err)
 			}
 		case <-ticker.C:
-			fmt.Println("心跳。。。。")
 			deadline := xtime.Now().Add(-2 * c.connMgr.server.opts.heartbeatInterval).Unix()
 			if atomic.LoadInt64(&c.lastHeartbeatTime) < deadline {
 				log.Debugf("server connection heartbeat timeout")

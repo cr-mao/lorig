@@ -77,14 +77,13 @@ func TestNewClient_Dial(t *testing.T) {
 
 func Test_Benchmark(t *testing.T) {
 	// 并发数
-	concurrency := 1000
+	concurrency := 6000
 	// 消息量
-	total := 500000
+	total := 12000
 	// 总共发送的消息条数
 	totalSent := int64(0)
 	// 总共接收的消息条数
 	totalRecv := int64(0)
-
 	// 准备消息
 	msg, err := packet.Pack(&packet.Message{
 		Seq:    1,
@@ -99,6 +98,20 @@ func Test_Benchmark(t *testing.T) {
 	client := tcp.NewClient()
 	client.OnReceive(func(conn network.Conn, msg []byte) {
 		atomic.AddInt64(&totalRecv, 1)
+
+		message, err := packet.Unpack(msg)
+		if err != nil {
+			fmt.Println(err)
+		}
+		if message.Seq != 1 {
+			fmt.Println("seq error")
+		}
+		if message.Route != 1 {
+			fmt.Println("Route error")
+		}
+		if string(message.Buffer) != "login ok" {
+			fmt.Println("date error")
+		}
 
 		wg.Done()
 	})
@@ -118,7 +131,7 @@ func Test_Benchmark(t *testing.T) {
 		}
 
 		conns[i] = conn
-		time.Sleep(time.Millisecond)
+		time.Sleep(time.Millisecond * 2)
 	}
 
 	// 发送消息
@@ -142,6 +155,7 @@ func Test_Benchmark(t *testing.T) {
 				}
 			}
 		}(conn)
+
 	}
 
 	startTime := time.Now().UnixNano()

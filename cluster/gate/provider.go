@@ -2,9 +2,7 @@ package gate
 
 import (
 	"context"
-	"fmt"
 	"github.com/cr-mao/lorig/errors"
-	"github.com/cr-mao/lorig/log"
 )
 
 var (
@@ -23,12 +21,9 @@ func newProvider(gate *Gate) *provider {
 
 // Bind 绑定用户与网关间的关系
 func (p *provider) Bind(ctx context.Context, cid, uid int64) error {
-	fmt.Println("绑定网关")
-	fmt.Println(cid, uid)
 	if cid <= 0 || uid <= 0 {
 		return ErrInvalidArgument
 	}
-	log.Infof("连接：%d ,绑定用户id:%d", cid, uid)
 	err := p.gate.session.Bind(cid, uid)
 	if err != nil {
 		return err

@@ -1,7 +1,6 @@
 package session
 
 import (
-	"fmt"
 	"github.com/cr-mao/lorig/log"
 	"sync"
 
@@ -42,8 +41,6 @@ func (s *Session) AddConn(conn network.Conn) {
 	cid, uid := conn.ID(), conn.UID()
 
 	s.conns[cid] = conn
-	fmt.Println("add connbbb", cid)
-	fmt.Printf("%v", s.conns)
 
 	if uid != 0 {
 		s.users[uid] = conn
@@ -314,8 +311,8 @@ func (s *Session) Conn(kind Kind, target int64) (network.Conn, error) {
 	switch kind {
 	case Conn:
 		conn, ok := s.conns[target]
-		log.Info("现在session中到连接 ", s.conns)
-		log.Info("现在session中到用户 ", s.users)
+		//log.Info("现在session中到连接 ", s.conns)
+		//log.Info("现在session中到用户 ", s.users)
 
 		if !ok {
 			return nil, ErrNotFoundSession
@@ -323,8 +320,8 @@ func (s *Session) Conn(kind Kind, target int64) (network.Conn, error) {
 		return conn, nil
 	case User:
 		conn, ok := s.users[target]
-		log.Info("现在session中到连接 ", s.conns)
-		log.Info("现在session中到用户 ", s.users)
+		//log.Info("现在session中到连接 ", s.conns)
+		//log.Info("现在session中到用户 ", s.users)
 		if !ok {
 			return nil, ErrNotFoundSession
 		}

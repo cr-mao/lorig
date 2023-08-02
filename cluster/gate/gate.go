@@ -6,7 +6,6 @@ package gate
 
 import (
 	"context"
-	"fmt"
 	"github.com/cr-mao/lorig/cluster"
 
 	"github.com/cr-mao/lorig/component"
@@ -93,14 +92,14 @@ func (g *Gate) stopNetworkServer() {
 // 处理连接打开
 func (g *Gate) handleConnect(conn network.Conn) {
 
-	fmt.Println("add conn to session", conn.ID())
+	//fmt.Println("add conn to session", conn.ID())
 	g.session.AddConn(conn)
 	// 无需通知node连接 ,相信大部分场景 是不用让node知道的
 }
 
 // 处理断开连接
 func (g *Gate) handleDisconnect(conn network.Conn) {
-	fmt.Println("disconnect")
+	//fmt.Println("disconnect")
 	g.session.RemConn(conn)
 	// 断链推送 给 业务服务器....
 	ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
