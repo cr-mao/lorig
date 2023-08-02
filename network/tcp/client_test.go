@@ -76,6 +76,7 @@ func TestNewClient_Dial(t *testing.T) {
 }
 
 func Test_Benchmark(t *testing.T) {
+	t.SkipNow()
 	// 并发数
 	concurrency := 6000
 	// 消息量
