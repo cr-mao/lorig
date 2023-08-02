@@ -8,7 +8,6 @@ package gate
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"github.com/cr-mao/lorig/cluster"
@@ -43,15 +42,16 @@ func (np *proxy) GetNodeServerConn() (network.Conn, error) {
 	}
 	locker.Lock()
 	defer locker.Unlock()
-	if nil != nodeServerConn {
+	if nodeServerConn != nil {
 		return nodeServerConn, nil
 	}
+
 	tcpClient := tcp.NewClient()
 	tcpClient.OnConnect(func(conn network.Conn) {
 		log.Infof("gateId:%d, connection node is opened,connId:%d,node remoteAddr:%s", np.gate.opts.id, conn.ID(), conn.RemoteAddr())
 	})
-	tcpClient.OnDisconnect(func(conn network.Conn) {
 
+	tcpClient.OnDisconnect(func(conn network.Conn) {
 		// 发往飞书 要......
 		log.Infof("gateId:%d, connection node is Disconnect,connId:%d,node remoteAddr:%s", np.gate.opts.id, conn.ID(), conn.RemoteAddr())
 	})
@@ -59,6 +59,8 @@ func (np *proxy) GetNodeServerConn() (network.Conn, error) {
 	tcpClient.OnReceive(func(conn network.Conn, data []byte) {
 		innerMsg := &cluster.InternalServerMsg{}
 		innerMsg.UnPack(data)
+		log.Info("tcp client 收到 connid :", innerMsg.ConnId)
+		log.Info("tcp client 收到 userid:", innerMsg.UserId)
 		gateConn, err := np.gate.session.Conn(session.Conn, innerMsg.ConnId)
 		if err != nil {
 			log.Errorf("get conn by connid err:%+v", err)
@@ -68,44 +70,23 @@ func (np *proxy) GetNodeServerConn() (network.Conn, error) {
 		defer cancel()
 		// 第一次绑定用户
 		if gateConn.UID() <= 0 && innerMsg.UserId > 0 {
-			err = np.gate.provider.Bind(ctx, innerMsg.ConnId, innerMsg.ConnId)
+			log.Infof("userId:%d, 绑定session", innerMsg.UserId)
+			err = np.gate.provider.Bind(ctx, innerMsg.ConnId, innerMsg.UserId)
 			if err != nil {
 				log.Errorf("")
 				return
 			}
 		}
-
-		//userId := innerMsg.UserId
-		//np.gate.session.Push()
-		//fmt.Println(innerMsg.UserId)
-
-		// 登录的时候，第一次给上userId
-		//if conn.UID() <= 0 && innerMsg.UserId > 0 {
-		//	np.gate.session.Bind(innerMsg.ConnId, innerMsg.UserId)
-		//
-		//	err := p.gate.session.Bind(cid, uid)
-		//	if err != nil {
-		//		return err
-		//	}
-		//
-		//	err = p.gate.proxy.bindGate(ctx, cid, uid)
-		//	if err != nil {
-		//		_, _ = p.gate.session.Unbind(uid)
-		//	}
-		//
-		//	err := p.gate.opts.locator.Set(ctx, uid, cluster.Gate, p.gate.opts.id)
-		//	if err != nil {
-		//		return err
-		//	}
-		//
-		//}
-
-		fmt.Println("网关收到业务服务器发来的的消息", string(data))
+		//  innerMsg.UserId 理论上 都>0
+		err = np.gate.session.Push(session.Conn, innerMsg.ConnId, innerMsg.MsgData)
+		if err != nil {
+			log.Errorf("push msg to user err; userId:%d,connId:%d,err:%v", innerMsg.UserId, innerMsg.ConnId, err)
+		}
 		// 从业务服读消息,这里还有 组播，广播逻辑 ....
-
 	})
-
-	return tcpClient.Dial()
+	var err error
+	nodeServerConn, err = tcpClient.Dial()
+	return nodeServerConn, err
 }
 
 // 网关投递消息到业务服务器
@@ -119,7 +100,7 @@ func (np *proxy) PushMsg(gateId int32, connId int64, userId int64, eventType clu
 		GateId:    gateId,
 		ConnId:    connId,
 		UserId:    userId,
-		EventType: eventType,
+		EventType: int16(eventType),
 		MsgData:   data, // message 结构体封包的数据
 	}
 	newData, err := innerMsg.Pack()
@@ -144,6 +125,7 @@ func (np *proxy) unbindGate(ctx context.Context, connId int64, userId int64) err
 
 // 绑定用户与网关间的关系
 func (p *proxy) bindGate(ctx context.Context, cid, uid int64) error {
+	log.Infof("location gate :%d 绑定:%d", p.gate.opts.id, uid)
 	err := p.gate.opts.location.Set(ctx, uid, cluster.Gate, xconv.Int32ToString(p.gate.opts.id))
 	if err != nil {
 		return err

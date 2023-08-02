@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"fmt"
 	"github.com/cr-mao/lorig/utils/xcall"
 	"net"
 	"sync"
@@ -288,6 +289,7 @@ func (c *serverConn) write() {
 	var ticker *time.Ticker
 
 	if c.connMgr.server.opts.heartbeatInterval > 0 {
+		fmt.Println("心跳时间", c.connMgr.server.opts.heartbeatInterval)
 		ticker = time.NewTicker(c.connMgr.server.opts.heartbeatInterval)
 		defer ticker.Stop()
 	} else {
@@ -320,6 +322,7 @@ func (c *serverConn) write() {
 				log.Errorf("write message error: %v", err)
 			}
 		case <-ticker.C:
+			fmt.Println("心跳。。。。")
 			deadline := xtime.Now().Add(-2 * c.connMgr.server.opts.heartbeatInterval).Unix()
 			if atomic.LoadInt64(&c.lastHeartbeatTime) < deadline {
 				log.Debugf("server connection heartbeat timeout")

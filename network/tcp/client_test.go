@@ -76,11 +76,10 @@ func TestNewClient_Dial(t *testing.T) {
 }
 
 func Test_Benchmark(t *testing.T) {
-	t.SkipNow()
 	// 并发数
 	concurrency := 1000
 	// 消息量
-	total := 1000000
+	total := 500000
 	// 总共发送的消息条数
 	totalSent := int64(0)
 	// 总共接收的消息条数

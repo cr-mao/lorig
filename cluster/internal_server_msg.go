@@ -29,7 +29,7 @@ type InternalServerMsg struct {
 	GateId    int32  // 在业务服 GateId_ConnId 做唯一id  用
 	ConnId    int64  // 网关的连接id
 	UserId    int64  // 网关,业务服务器 用户id，网关可以是0， 业务服返回的肯定是知道哪个用户id的。
-	EventType Event  // 事件类型
+	EventType int16  // 事件类型
 	MsgData   []byte // 原始数据
 }
 

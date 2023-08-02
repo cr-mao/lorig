@@ -27,8 +27,8 @@ func main() {
 	var cstZone, _ = time.LoadLocation(conf.GetString("app.timezone"))
 	time.Local = cstZone
 
+	timeStart := time.Now().UnixMilli()
 	for i := 0; i < 1; i++ {
-		time.Sleep(time.Millisecond * 1)
 		client := tcp.NewClient()
 		client.OnConnect(func(conn network.Conn) {
 			fmt.Println("connection is opened")
@@ -42,7 +42,7 @@ func main() {
 				fmt.Println("receive err", err)
 				return
 			}
-			fmt.Printf("receive msg from server, connection id: %d, seq: %d, route: %d, msg: %s", conn.ID(), message.Seq, message.Route, string(message.Buffer))
+			fmt.Printf("receive msg from server, connection id: %d, seq: %d, route: %d, msg: %s\n", conn.ID(), message.Seq, message.Route, string(message.Buffer))
 		})
 		conn, err := client.Dial()
 		if err != nil {
@@ -50,18 +50,24 @@ func main() {
 		}
 
 		defer conn.Close()
-
 		msg, _ := packet.Pack(&packet.Message{
 			Seq:    1,
 			Route:  1,
 			Buffer: []byte("hello server~~"),
 		})
-		conn.Push(msg)
-		conn.Push(msg)
-		conn.Push(msg)
-		conn.Push(msg)
-		conn.Push(msg)
-
+		num := 0
+		for {
+			conn.Push(msg)
+			num++
+			if num > 10000 {
+				break
+			}
+		}
+		//conn.Push(msg)
+		//conn.Push(msg)
+		//conn.Push(msg)
 	}
+	fmt.Println("耗时", time.Now().UnixMilli()-timeStart)
 
+	time.Sleep(10 * time.Second)
 }

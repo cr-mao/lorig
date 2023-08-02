@@ -7,6 +7,7 @@ Desc: main.go
 package main
 
 import (
+	"github.com/cr-mao/lorig/location/redis_location"
 	"math/rand"
 	"time"
 
@@ -26,9 +27,12 @@ func main() {
 	time.Local = cstZone
 
 	contanier := lorig.NewContainer()
-	gateServer := gate.NewGate(gate.WithServer(
-		tcp.NewServer(),
-	))
+
+	location := redis_location.NewRedisLocation()
+	gateServer := gate.NewGate(
+		gate.WithServer(tcp.NewServer()),
+		gate.WithLocation(location),
+	)
 	// 添加网关组件
 	contanier.Add(gateServer)
 	// 启动容器

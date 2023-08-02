@@ -19,7 +19,7 @@ const (
 )
 
 // Event 事件
-type Event int
+type Event int16
 
 const (
 	Send       Event = 0 //  正常收发数据

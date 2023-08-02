@@ -7,7 +7,9 @@ Desc: main.go
 package main
 
 import (
-	"fmt"
+	"github.com/cr-mao/lorig/cluster"
+	"github.com/cr-mao/lorig/log"
+	"github.com/cr-mao/lorig/packet"
 	"math/rand"
 	"time"
 
@@ -19,19 +21,26 @@ import (
 )
 
 // 登录
-func Login(conn network.Conn, userId int64, gateWayConnId int64, data []byte) {
 
-	fmt.Println("login", string(data))
-}
-
-// 移动
-func Move(conn network.Conn, userId int64, gateWayConnId int64, data []byte) {
-	fmt.Println("Move", string(data))
+func Login(conn network.Conn, req *cluster.InternalServerMsg, message *packet.Message) {
+	message.Buffer = []byte("login ok")
+	req.UserId = 1000
+	req.MsgData, _ = packet.Pack(message)
+	msgData, err := req.Pack()
+	if err != nil {
+		log.Errorf("login error: %v", err)
+		return
+	}
+	// 找到网关对应到连接
+	err = conn.Push(msgData)
+	if err != nil {
+		log.Errorf("login push msg error: %v", err)
+		return
+	}
 }
 
 func RegistRouter(node *node.Node) {
 	node.AddRouter(1, Login)
-	node.AddRouter(2, Move)
 }
 
 func main() {

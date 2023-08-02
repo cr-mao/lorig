@@ -6,6 +6,7 @@ package node
 
 import (
 	"context"
+
 	"github.com/cr-mao/lorig/cluster"
 	"github.com/cr-mao/lorig/component"
 	"github.com/cr-mao/lorig/log"
@@ -14,7 +15,7 @@ import (
 )
 
 // 用户ID， 网关连接id
-type RequestHandler func(conn network.Conn, userId int64, gateWayConnId int64, data []byte)
+type RequestHandler func(conn network.Conn, innerMsg *cluster.InternalServerMsg, message *packet.Message)
 
 type Node struct {
 	component.Base
@@ -95,13 +96,13 @@ func (g *Node) stopNetworkServer() {
 
 // 处理连接打开
 func (g *Node) handleConnect(conn network.Conn) {
-	log.Infof("有连接进来 remoteAddr:%s,localAddr", conn.RemoteAddr(), conn.LocalAddr())
+	log.Infof("有连接进来 remoteAddr:%s,localAddr:%s", conn.RemoteAddr(), conn.LocalAddr())
 }
 
 // 处理断开连接
 func (g *Node) handleDisconnect(conn network.Conn) {
 	//todo  看看是否要报警处理.... 因为这个是内部的连接
-	log.Infof("有连接进来 remoteAddr:%s,localAddr", conn.RemoteAddr(), conn.LocalAddr())
+	log.Infof("有连接进来 remoteAddr:%s,localAddr:%s", conn.RemoteAddr(), conn.LocalAddr())
 }
 
 // 处理接收到的消息
@@ -113,25 +114,23 @@ func (node *Node) handleReceive(conn network.Conn, data []byte) {
 		return
 	}
 	// 断连处理
-	if innerMsg.EventType == cluster.Disconnect {
-
+	if innerMsg.EventType == int16(cluster.Disconnect) {
 		return
 	}
-
 	realData := innerMsg.MsgData
 	message, err := packet.Unpack(realData)
 	if err != nil {
 		log.Errorf("node handleReceive Unpack error: %v", err)
 		return
 	}
-
 	requestHandle, ok := node.Route[message.Route]
 	if !ok {
 		log.Errorf("handleReceive routeId not exist %d", message.Route)
 		return
 	}
+
 	// 处理消息
-	requestHandle(conn, innerMsg.UserId, innerMsg.ConnId, message.Buffer)
+	requestHandle(conn, innerMsg, message)
 }
 
 func (node *Node) debugPrint() {

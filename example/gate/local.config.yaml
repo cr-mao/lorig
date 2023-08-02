@@ -49,6 +49,8 @@ log:
   # 是否压缩，压缩日志不方便查看，我们设置为 false（压缩可节省空间）
   compress: false
 
+
+
 redis:
   # redis配置
   redis_host: "127.0.0.1"
@@ -84,7 +86,7 @@ network:
       # 建议 网关服false， node服改成true
       handlerMsgAsync: false
       # 是否发心跳给客户端 , 建议 网关服关闭， node 服开启
-      serverHearSend: false
+      serverHearSend: true
     client:
       addr: "127.0.0.1:4001"
       heartbeatInterval: 10
@@ -95,3 +97,10 @@ transport:
       addr: 127.0.0.1:13001
     client:
       poolSize: 10
+location:
+  redis:
+    addrs: ["127.0.0.1:6380"]
+    db: 15
+    maxRetries: 3
+    username: ""
+    password: ""

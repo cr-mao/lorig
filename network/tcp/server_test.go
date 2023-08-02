@@ -23,7 +23,7 @@ func setLimit() {
 }
 
 func TestServer(t *testing.T) {
-	t.SkipNow()
+	//t.SkipNow()
 	setLimit()
 
 	server := tcp.NewServer()
