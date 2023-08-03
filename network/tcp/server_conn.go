@@ -301,20 +301,20 @@ func (c *serverConn) write() {
 				return
 			}
 
-			//c.rw.RLock()
+			c.rw.RLock()
 			if r.typ == closeSig {
 				c.done <- struct{}{}
-				//c.rw.RUnlock()
+				c.rw.RUnlock()
 				return
 			}
 
 			if atomic.LoadInt32(&c.state) == int32(network.ConnClosed) {
-				//c.rw.RUnlock()
+				c.rw.RUnlock()
 				return
 			}
 
 			err := write(c.conn, r.msg)
-			//c.rw.RUnlock()
+			c.rw.RUnlock()
 
 			if err != nil {
 				log.Errorf("write message error: %v", err)
