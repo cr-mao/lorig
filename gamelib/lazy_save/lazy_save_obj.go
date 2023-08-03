@@ -8,5 +8,5 @@ type LazySaveObj interface {
 
 	//
 	// SaveOrUpdate 保存或更新
-	SaveOrUpdate()
+	SaveOrUpdate(callback func())
 }

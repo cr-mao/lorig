@@ -26,7 +26,6 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 - 协议：支持protobuf、json
 - 配置: 基于viper
 - 游戏常用技术(见gamelib):异步操作 、定时任务及守护任务 、延迟保存、时间轮
-- 热更(todo)
 
 ### 4.协议
 

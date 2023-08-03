@@ -21,9 +21,13 @@ func (user *UserLazySaveObj) GetLsoId() string {
 	return fmt.Sprintf("userdata_%v", user.UserId)
 }
 
-func (user *UserLazySaveObj) SaveOrUpdate() {
+func (user *UserLazySaveObj) SaveOrUpdate(callback func()) {
 
 	fmt.Println("执行存库操作，可能是异步,当前时间戳:", time.Now().Unix())
+
+	if callback != nil {
+		callback()
+	}
 }
 
 /*
@@ -61,6 +65,12 @@ func TestLazySave(t *testing.T) {
 		}
 		// 20秒后才会更改
 		lazy_save.SaveOrUpdate(lazySaveObj)
+
+		// 手动保存
+		lazySaveObj.SaveOrUpdate(func() {
+			fmt.Println("手动保存成功")
+		})
+
 		times++
 		if times > 3 {
 			break

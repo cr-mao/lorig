@@ -53,7 +53,7 @@ func startSave() {
 			time.Sleep(time.Second)
 
 			nowTime := time.Now().UnixMilli()
-			deleteLsoIdArray := make([]string, 64)
+			deleteLsoIdArray := make([]string, 0, 64)
 
 			lazySaveRecordMap.Range(func(_, val interface{}) bool {
 				if nil == val {
@@ -73,7 +73,7 @@ func startSave() {
 					currRecord.objRef.GetLsoId(),
 				)
 
-				currRecord.objRef.SaveOrUpdate()
+				currRecord.objRef.SaveOrUpdate(nil)
 				deleteLsoIdArray = append(deleteLsoIdArray, currRecord.objRef.GetLsoId())
 				return true
 			})
