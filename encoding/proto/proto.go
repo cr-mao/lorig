@@ -1,10 +1,3 @@
-/**
- * @Author: fuxiao
- * @Email: 576101059@qq.com
- * @Date: 2022/5/14 10:47 上午
- * @Desc: TODO
- */
-
 package proto
 
 import (

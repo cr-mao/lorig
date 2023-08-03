@@ -2,9 +2,9 @@ package node
 
 import (
 	"context"
-	"github.com/cr-mao/lorig/conf"
 	"time"
 
+	"github.com/cr-mao/lorig/conf"
 	"github.com/cr-mao/lorig/crypto"
 	"github.com/cr-mao/lorig/encoding"
 	"github.com/cr-mao/lorig/locate"

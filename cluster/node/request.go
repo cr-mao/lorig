@@ -1,10 +1,3 @@
-/**
- * @Author: fuxiao
- * @Email: 576101059@qq.com
- * @Date: 2022/6/19 12:20 下午
- * @Desc: TODO
- */
-
 package node
 
 import (

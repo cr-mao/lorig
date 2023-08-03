@@ -2,6 +2,7 @@ package master
 
 import (
 	"context"
+
 	"github.com/cr-mao/lorig/component"
 	_ "github.com/cr-mao/lorig/crypto/ecc"
 	_ "github.com/cr-mao/lorig/crypto/rsa"

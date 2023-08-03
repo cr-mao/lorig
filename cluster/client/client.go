@@ -2,12 +2,13 @@ package client
 
 import (
 	"context"
+	"sync"
+
 	"github.com/cr-mao/lorig/cluster"
 	"github.com/cr-mao/lorig/component"
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/network"
 	"github.com/cr-mao/lorig/packet"
-	"sync"
 )
 
 type RouteHandler func(req Request)

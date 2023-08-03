@@ -7,18 +7,18 @@ Desc: main.go
 package main
 
 import (
-	"github.com/cr-mao/lorig/example/gate/grpc_middleware"
-	"github.com/cr-mao/lorig/registry/etcd"
-	"github.com/cr-mao/lorig/transport/grpc"
 	"math/rand"
 	"time"
 
 	"github.com/cr-mao/lorig"
 	"github.com/cr-mao/lorig/cluster/gate"
+	"github.com/cr-mao/lorig/component"
 	"github.com/cr-mao/lorig/conf"
+	"github.com/cr-mao/lorig/example/gate/grpc_middleware"
 	"github.com/cr-mao/lorig/locate/redis"
 	"github.com/cr-mao/lorig/network/tcp"
-
+	"github.com/cr-mao/lorig/registry/etcd"
+	"github.com/cr-mao/lorig/transport/grpc"
 	grpclib "google.golang.org/grpc"
 )
 
@@ -42,8 +42,8 @@ func main() {
 		gate.WithTransporter(rpcServer),
 		gate.WithRegistry(etcd.NewRegistry()),
 	)
-	// 添加网关组件
-	contanier.Add(gateServer)
+	// 添加网关组件, pprof分析
+	contanier.Add(gateServer, component.NewPProf())
 	// 启动容器
 	contanier.Serve()
 }

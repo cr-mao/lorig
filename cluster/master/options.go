@@ -2,6 +2,8 @@ package master
 
 import (
 	"context"
+	"time"
+
 	"github.com/cr-mao/lorig/conf"
 	"github.com/cr-mao/lorig/crypto"
 	"github.com/cr-mao/lorig/encoding"
@@ -9,7 +11,6 @@ import (
 	"github.com/cr-mao/lorig/registry"
 	"github.com/cr-mao/lorig/transport"
 	"github.com/cr-mao/lorig/utils/xuuid"
-	"time"
 )
 
 const (

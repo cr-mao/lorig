@@ -2,6 +2,8 @@ package client
 
 import (
 	"context"
+	"time"
+
 	"github.com/cr-mao/lorig/conf"
 	"github.com/cr-mao/lorig/crypto"
 	_ "github.com/cr-mao/lorig/crypto/ecc"
@@ -12,7 +14,6 @@ import (
 	_ "github.com/cr-mao/lorig/encoding/xml"
 	"github.com/cr-mao/lorig/network"
 	"github.com/cr-mao/lorig/utils/xuuid"
-	"time"
 )
 
 const (

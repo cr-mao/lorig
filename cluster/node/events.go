@@ -1,9 +1,10 @@
 package node
 
 import (
+	"sync"
+
 	"github.com/cr-mao/lorig/cluster"
 	"github.com/cr-mao/lorig/log"
-	"sync"
 )
 
 type EventHandler func(event *Event)

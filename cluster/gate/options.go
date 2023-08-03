@@ -2,14 +2,14 @@ package gate
 
 import (
 	"context"
-	"github.com/cr-mao/lorig/conf"
-	"github.com/cr-mao/lorig/locate"
-	"github.com/cr-mao/lorig/transport"
-	"github.com/cr-mao/lorig/utils/xuuid"
 	"time"
 
+	"github.com/cr-mao/lorig/conf"
+	"github.com/cr-mao/lorig/locate"
 	"github.com/cr-mao/lorig/network"
 	"github.com/cr-mao/lorig/registry"
+	"github.com/cr-mao/lorig/transport"
+	"github.com/cr-mao/lorig/utils/xuuid"
 )
 
 const (

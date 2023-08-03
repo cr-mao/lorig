@@ -2,15 +2,14 @@ package mesh
 
 import (
 	"context"
+	"time"
+
+	"github.com/cr-mao/lorig/conf"
 	"github.com/cr-mao/lorig/crypto"
 	"github.com/cr-mao/lorig/encoding"
 	"github.com/cr-mao/lorig/locate"
 	"github.com/cr-mao/lorig/registry"
 	"github.com/cr-mao/lorig/transport"
-
-	"github.com/cr-mao/lorig/conf"
-
-	"time"
 )
 
 const (

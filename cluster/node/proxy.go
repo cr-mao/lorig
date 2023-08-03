@@ -2,6 +2,7 @@ package node
 
 import (
 	"context"
+
 	"github.com/cr-mao/lorig/cluster"
 	"github.com/cr-mao/lorig/internal/link"
 	"github.com/cr-mao/lorig/registry"
@@ -10,13 +11,8 @@ import (
 )
 
 var (
-	ErrInvalidGID         = link.ErrInvalidGID
-	ErrInvalidNID         = link.ErrInvalidNID
-	ErrInvalidMessage     = link.ErrInvalidMessage
 	ErrInvalidArgument    = link.ErrInvalidArgument
-	ErrInvalidSessionKind = link.ErrInvalidSessionKind
 	ErrNotFoundUserSource = link.ErrNotFoundUserSource
-	ErrReceiveTargetEmpty = link.ErrReceiveTargetEmpty
 )
 
 type (

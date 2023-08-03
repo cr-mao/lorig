@@ -1,15 +1,9 @@
-/**
- * @Author: fuxiao
- * @Email: 576101059@qq.com
- * @Date: 2022/9/17 1:22 上午
- * @Desc: TODO
- */
-
 package etcd
 
 import (
 	"context"
 	"fmt"
+	"github.com/cr-mao/lorig/log"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"time"
 
@@ -162,6 +156,7 @@ func (r *registrar) heartbeat(ctx context.Context, leaseID clientv3.LeaseID, key
 
 		select {
 		case _, ok = <-chKA:
+			log.Debug("keep alive ", ok, time.Now().Unix())
 			if !ok {
 				if ctx.Err() != nil {
 					return

@@ -4,6 +4,16 @@
 # sudo docker run -d --restart=always --privileged=true --name etcd -p 2379:2379 -p 2380:2380 -v /opt/etcd_data:/bitnami/etcd --env ALLOW_NONE_AUTHENTICATION=yes --env ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379 --log-opt max-size=10m --log-opt max-file=1 bitnami/etcd:3.4.15
 # 创建租约
 
+export ETCDCTL_API=3
+
+# etcdctl get /services/gate/`id`
+etcdctl get /services/gate --prefix
+
+
+
+
+
+
 etcdctl lease grant 20
 
 #查看租约列表

@@ -1,10 +1,3 @@
-/**
- * @Author: fuxiao
- * @Email: 576101059@qq.com
- * @Date: 2022/5/28 12:13 下午
- * @Desc: TODO
- */
-
 package xnet
 
 import (

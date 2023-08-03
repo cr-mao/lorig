@@ -2,7 +2,6 @@ package gate
 
 import (
 	"context"
-
 	"time"
 
 	"github.com/cr-mao/lorig/cluster"
@@ -83,6 +82,7 @@ func (g *Gate) Start() {
 
 // Destroy 销毁组件
 func (g *Gate) Destroy() {
+	log.Infof("gate %s 停止服务", g.opts.server.Addr())
 	g.deregisterServiceInstance()
 
 	g.stopNetworkServer()
@@ -191,11 +191,12 @@ func (g *Gate) registerServiceInstance() {
 // 解注册服务实例
 func (g *Gate) deregisterServiceInstance() {
 	ctx, cancel := context.WithTimeout(g.ctx, 10*time.Second)
-	err := g.opts.registry.Deregister(ctx, g.instance)
 	defer cancel()
+	err := g.opts.registry.Deregister(ctx, g.instance)
 	if err != nil {
 		log.Errorf("deregister dispatcher instance failed: %v", err)
 	}
+	log.Info("服务注册销毁成功")
 }
 
 func (g *Gate) debugPrint() {
