@@ -3,6 +3,7 @@ package packet
 import (
 	"bytes"
 	"encoding/binary"
+
 	"github.com/cr-mao/lorig/errors"
 	"github.com/cr-mao/lorig/log"
 )

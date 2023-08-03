@@ -2,8 +2,9 @@ package packet
 
 import (
 	"encoding/binary"
-	"github.com/cr-mao/lorig/conf"
 	"strings"
+
+	"github.com/cr-mao/lorig/conf"
 )
 
 const (
