@@ -1,10 +1,9 @@
 package net
 
 import (
+	"github.com/cr-mao/lorig/errors"
 	"net"
 	"strconv"
-
-	"github.com/cr-mao/lorig/errors"
 )
 
 // ParseAddr 解析地址

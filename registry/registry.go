@@ -1,14 +1,8 @@
-/**
-User: cr-mao
-Date: 2023/7/31
-Time: 20:39
-Desc: registry服务注册发现
-*/
 package registry
 
 import (
 	"context"
-	
+
 	"github.com/cr-mao/lorig/cluster"
 )
 

@@ -1,9 +1,8 @@
 package xfile_test
 
 import (
-	"testing"
-
 	"github.com/cr-mao/lorig/utils/xfile"
+	"testing"
 )
 
 func TestWriteFile(t *testing.T) {

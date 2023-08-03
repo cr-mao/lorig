@@ -1,7 +1,6 @@
 package session
 
 import (
-	"github.com/cr-mao/lorig/log"
 	"sync"
 
 	"github.com/cr-mao/lorig/errors"
@@ -14,8 +13,8 @@ var (
 )
 
 const (
-	Conn Kind = 1 // 连接SESSION
-	User Kind = 2 // 用户SESSION
+	Conn Kind = iota + 1 // 连接SESSION
+	User                 // 用户SESSION
 )
 
 type Kind int
@@ -83,7 +82,6 @@ func (s *Session) Bind(cid, uid int64) error {
 	}
 
 	conn.Bind(uid)
-
 	s.users[uid] = conn
 
 	return nil
@@ -106,57 +104,54 @@ func (s *Session) Unbind(uid int64) (int64, error) {
 }
 
 // LocalIP 获取本地IP
-func (s *Session) LocalIP(kind Kind, target int64) string {
+func (s *Session) LocalIP(kind Kind, target int64) (string, error) {
 	s.rw.RLock()
 	defer s.rw.RUnlock()
 
 	conn, err := s.conn(kind, target)
 	if err != nil {
-		log.Errorf("session LocalIP error %+v", err)
-		return ""
+		return "", err
 	}
 
-	return conn.LocalIP()
+	return conn.LocalIP(), nil
 }
 
 // LocalAddr 获取本地地址
-func (s *Session) LocalAddr(kind Kind, target int64) string {
+func (s *Session) LocalAddr(kind Kind, target int64) (string, error) {
 	s.rw.RLock()
 	defer s.rw.RUnlock()
+
 	conn, err := s.conn(kind, target)
 	if err != nil {
-		log.Errorf("session LocalAddr error %+v", err)
-		return ""
+		return "", err
 	}
-	return conn.LocalAddr()
+
+	return conn.LocalAddr(), nil
 }
 
 // RemoteIP 获取远端IP
-func (s *Session) RemoteIP(kind Kind, target int64) string {
+func (s *Session) RemoteIP(kind Kind, target int64) (string, error) {
 	s.rw.RLock()
 	defer s.rw.RUnlock()
 
 	conn, err := s.conn(kind, target)
 	if err != nil {
-		log.Errorf("session RemoteIP error %+v", err)
-		return ""
+		return "", err
 	}
-
-	return conn.RemoteIP()
+	return conn.RemoteIP(), nil
 }
 
 // RemoteAddr 获取远端地址
-func (s *Session) RemoteAddr(kind Kind, target int64) string {
+func (s *Session) RemoteAddr(kind Kind, target int64) (string, error) {
 	s.rw.RLock()
 	defer s.rw.RUnlock()
 
 	conn, err := s.conn(kind, target)
 	if err != nil {
-		log.Errorf("session RemoteAddr error %+v", err)
-		return ""
+		return "", err
 	}
 
-	return conn.RemoteAddr()
+	return conn.RemoteAddr(), nil
 }
 
 // Close 关闭会话
@@ -285,7 +280,6 @@ func (s *Session) Stat(kind Kind) (int64, error) {
 
 // 获取会话
 func (s *Session) conn(kind Kind, target int64) (network.Conn, error) {
-
 	switch kind {
 	case Conn:
 		conn, ok := s.conns[target]
@@ -295,33 +289,6 @@ func (s *Session) conn(kind Kind, target int64) (network.Conn, error) {
 		return conn, nil
 	case User:
 		conn, ok := s.users[target]
-		if !ok {
-			return nil, ErrNotFoundSession
-		}
-		return conn, nil
-	default:
-		return nil, ErrInvalidSessionKind
-	}
-}
-
-// 获取会话
-func (s *Session) Conn(kind Kind, target int64) (network.Conn, error) {
-	s.rw.RLock()
-	defer s.rw.RUnlock()
-	switch kind {
-	case Conn:
-		conn, ok := s.conns[target]
-		//log.Info("现在session中到连接 ", s.conns)
-		//log.Info("现在session中到用户 ", s.users)
-
-		if !ok {
-			return nil, ErrNotFoundSession
-		}
-		return conn, nil
-	case User:
-		conn, ok := s.users[target]
-		//log.Info("现在session中到连接 ", s.conns)
-		//log.Info("现在session中到用户 ", s.users)
 		if !ok {
 			return nil, ErrNotFoundSession
 		}

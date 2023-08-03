@@ -7,14 +7,19 @@ Desc: main.go
 package main
 
 import (
-	"github.com/cr-mao/lorig/location/redis_location"
+	"github.com/cr-mao/lorig/example/gate/grpc_middleware"
+	"github.com/cr-mao/lorig/registry/etcd"
+	"github.com/cr-mao/lorig/transport/grpc"
 	"math/rand"
 	"time"
 
 	"github.com/cr-mao/lorig"
 	"github.com/cr-mao/lorig/cluster/gate"
 	"github.com/cr-mao/lorig/conf"
+	"github.com/cr-mao/lorig/locate/redis"
 	"github.com/cr-mao/lorig/network/tcp"
+
+	grpclib "google.golang.org/grpc"
 )
 
 func main() {
@@ -25,13 +30,17 @@ func main() {
 	//全局设置时区
 	var cstZone, _ = time.LoadLocation(conf.GetString("app.timezone"))
 	time.Local = cstZone
-
 	contanier := lorig.NewContainer()
+	location := redis.NewLocator()
+	serverOpts := make([]grpclib.ServerOption, 0, 1)
+	serverOpts = append(serverOpts, grpclib.ChainUnaryInterceptor(grpc_middleware.UnaryCrashInterceptor))
+	rpcServer := grpc.NewTransporter(grpc.WithServerOptions(serverOpts...))
 
-	location := redis_location.NewRedisLocation()
 	gateServer := gate.NewGate(
 		gate.WithServer(tcp.NewServer()),
-		gate.WithLocation(location),
+		gate.WithLocator(location),
+		gate.WithTransporter(rpcServer),
+		gate.WithRegistry(etcd.NewRegistry()),
 	)
 	// 添加网关组件
 	contanier.Add(gateServer)

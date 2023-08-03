@@ -1,4 +1,4 @@
-package redis_location
+package redis
 
 import (
 	"context"
@@ -13,11 +13,11 @@ const (
 )
 
 const (
-	defaultAddrsKey      = "location.redis.addrs"
-	defaultDBKey         = "location.redis.db"
-	defaultMaxRetriesKey = "location.redis.maxRetries"
-	defaultUsernameKey   = "location.redis.username"
-	defaultPasswordKey   = "location.redis.password"
+	defaultAddrsKey      = "locate.redis.addrs"
+	defaultDBKey         = "locate.redis.db"
+	defaultMaxRetriesKey = "locate.redis.maxRetries"
+	defaultUsernameKey   = "locate.redis.username"
+	defaultPasswordKey   = "locate.redis.password"
 )
 
 type Option func(o *options)

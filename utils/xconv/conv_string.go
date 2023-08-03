@@ -1,21 +1,13 @@
 package xconv
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/cr-mao/lorig/encoding/json"
 	"reflect"
 	"strconv"
 	"time"
 	"unsafe"
 )
-
-func Int64ToString(i int64) string {
-	return strconv.Itoa(int(i))
-}
-
-func Int32ToString(i int32) string {
-	return strconv.Itoa(int(i))
-}
 
 func String(any interface{}) string {
 	if any == nil {

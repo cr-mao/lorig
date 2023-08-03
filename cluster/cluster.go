@@ -4,8 +4,10 @@ package cluster
 type Kind string
 
 const (
-	Gate Kind = "gate" // 网关服
-	Node Kind = "node" // 节点服
+	Master Kind = "master" // 管理服
+	Gate   Kind = "gate"   // 网关服
+	Node   Kind = "node"   // 节点服
+	Mesh   Kind = "mesh"   // 微服务
 )
 
 // State 集群实例状态
@@ -19,11 +21,10 @@ const (
 )
 
 // Event 事件
-type Event int16
+type Event int
 
 const (
-	Send       Event = 0 //  正常收发数据
-	Connect    Event = 1 //   打开连接
-	Reconnect  Event = 2 //   断线重连
-	Disconnect Event = 3 //   断开连接
+	Connect    Event = iota + 1 // 打开连接
+	Reconnect                   // 断线重连
+	Disconnect                  // 断开连接
 )

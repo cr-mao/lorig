@@ -2,14 +2,12 @@ package node
 
 import (
 	"context"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/encoding/gzip"
-	"google.golang.org/grpc/status"
-
 	"github.com/cr-mao/lorig/transport"
 	"github.com/cr-mao/lorig/transport/grpc/internal/code"
 	"github.com/cr-mao/lorig/transport/grpc/internal/pb"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/encoding/gzip"
+	"google.golang.org/grpc/status"
 )
 
 type Client struct {

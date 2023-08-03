@@ -2,15 +2,14 @@ package gate
 
 import (
 	"context"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/encoding/gzip"
-	"google.golang.org/grpc/status"
-
 	"github.com/cr-mao/lorig/packet"
 	"github.com/cr-mao/lorig/session"
 	"github.com/cr-mao/lorig/transport/grpc/internal/code"
 	"github.com/cr-mao/lorig/transport/grpc/internal/pb"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/encoding/gzip"
+	"google.golang.org/grpc/status"
 )
 
 type Client struct {

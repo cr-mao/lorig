@@ -1,12 +1,11 @@
 package xfile
 
 import (
+	"github.com/cr-mao/lorig/utils/xpath"
 	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-
-	"github.com/cr-mao/lorig/utils/xpath"
 )
 
 // WriteFile 写文件

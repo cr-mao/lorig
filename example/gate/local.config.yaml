@@ -97,7 +97,7 @@ transport:
       addr: 127.0.0.1:13001
     client:
       poolSize: 10
-location:
+locate:
   redis:
     addrs: ["127.0.0.1:6380"]
     db: 15

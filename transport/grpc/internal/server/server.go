@@ -3,13 +3,11 @@ package server
 import (
 	"errors"
 	"fmt"
-	"net"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-
 	"github.com/cr-mao/lorig/internal/endpoint"
 	xnet "github.com/cr-mao/lorig/internal/net"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"net"
 )
 
 const scheme = "grpc"
@@ -89,7 +87,7 @@ func (s *Server) Start() error {
 
 // Stop 停止服务器
 func (s *Server) Stop() error {
-	s.server.GracefulStop()
+	s.server.Stop()
 	return nil
 }
 

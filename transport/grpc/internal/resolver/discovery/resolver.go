@@ -2,13 +2,11 @@ package discovery
 
 import (
 	"context"
-	"time"
-
 	"github.com/cr-mao/lorig/internal/endpoint"
 	"github.com/cr-mao/lorig/log"
 	"github.com/cr-mao/lorig/registry"
-
 	"google.golang.org/grpc/resolver"
+	"time"
 )
 
 type Resolver struct {

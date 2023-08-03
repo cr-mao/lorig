@@ -1,9 +1,8 @@
 package xrand_test
 
 import (
-	"testing"
-
 	"github.com/cr-mao/lorig/utils/xrand"
+	"testing"
 )
 
 func Test_Str(t *testing.T) {

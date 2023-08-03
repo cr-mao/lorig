@@ -1,16 +1,15 @@
 package client
 
 import (
-	"sync"
+	"github.com/cr-mao/lorig/registry"
+	"github.com/cr-mao/lorig/transport/grpc/internal/resolver/direct"
+	"github.com/cr-mao/lorig/transport/grpc/internal/resolver/discovery"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"
-
-	"github.com/cr-mao/lorig/registry"
-	"github.com/cr-mao/lorig/transport/grpc/internal/resolver/direct"
-	"github.com/cr-mao/lorig/transport/grpc/internal/resolver/discovery"
+	"sync"
 )
 
 type Builder struct {

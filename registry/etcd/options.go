@@ -4,8 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/cr-mao/lorig/conf"
 	clientv3 "go.etcd.io/etcd/client/v3"
+
+	"github.com/cr-mao/lorig/conf"
 )
 
 const (
@@ -18,12 +19,12 @@ const (
 )
 
 const (
-	defaultAddrsKey         = "registry.etcd.addrs"
-	defaultDialTimeoutKey   = "registry.etcd.dialTimeout"
-	defaultNamespaceKey     = "registry.etcd.namespace"
-	defaultTimeoutKey       = "registry.etcd.timeout"
-	defaultRetryTimesKey    = "registry.etcd.retryTimes"
-	defaultRetryIntervalKey = "registry.etcd.retryInterval"
+	defaultAddrsKey         = "config.registry.etcd.addrs"
+	defaultDialTimeoutKey   = "config.registry.etcd.dialTimeout"
+	defaultNamespaceKey     = "config.registry.etcd.namespace"
+	defaultTimeoutKey       = "config.registry.etcd.timeout"
+	defaultRetryTimesKey    = "config.registry.etcd.retryTimes"
+	defaultRetryIntervalKey = "config.registry.etcd.retryInterval"
 )
 
 type Option func(o *options)

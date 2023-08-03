@@ -1,12 +1,12 @@
 package grpc
 
 import (
-	"google.golang.org/grpc"
-
 	"github.com/cr-mao/lorig/conf"
 	"github.com/cr-mao/lorig/registry"
 	"github.com/cr-mao/lorig/transport/grpc/internal/client"
 	"github.com/cr-mao/lorig/transport/grpc/internal/server"
+
+	"google.golang.org/grpc"
 )
 
 const (
@@ -32,12 +32,13 @@ type options struct {
 
 func defaultOptions() *options {
 	opts := &options{}
-	opts.server.Addr = conf.GetString(defaultServerAddrKey, defaultServerAddr)
-	opts.server.KeyFile = conf.GetString(defaultServerKeyFileKey)
-	opts.server.CertFile = conf.GetString(defaultServerCertFileKey)
+	opts.server.Addr = conf.Get(defaultServerAddrKey, defaultServerAddr)
+	opts.server.KeyFile = conf.Get(defaultServerKeyFileKey)
+	opts.server.CertFile = conf.Get(defaultServerCertFileKey)
 	opts.client.PoolSize = conf.GetInt(defaultClientPoolSizeKey, defaultClientPoolSize)
-	opts.client.CertFile = conf.GetString(defaultClientCertFileKey, "")
+	opts.client.CertFile = conf.GetString(defaultClientCertFileKey)
 	opts.client.ServerName = conf.GetString(defaultClientServerNameKey)
+
 	return opts
 }
 

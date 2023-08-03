@@ -1,11 +1,13 @@
 # lori 
 
+
 [![Build Status](https://github.com/cr-mao/lorig/workflows/Go/badge.svg)](https://github.com/cr-mao/lorig/actions)
 [![Go Reference](https://pkg.go.dev/badge/github.com/cr-mao/lorig.svg)](https://pkg.go.dev/github.com/cr-mao/lorig)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ### 1.介绍
-lorig 是一款基于golang的分布式游戏服务器框架
+lorig 是一款基于golang的分布式游戏服务器框架, 是基于 [due](https://github.com/dobyte/due) 进行二次开发的 .
+
 
 ![](gamestruct.png)
 
@@ -59,7 +61,7 @@ tcp协议时，为了解决粘包问题，还应在包前面加上包长度len�
 
 
 ### 参考
+
 - [kratos](https://github.com/go-kratos/kratos)
-- [due](https://github.com/dobyte/due)
 - [zinx](https://github.com/aceld/zinx)
 - [iam极客时间go语言项目实战](https://github.com/marmotedu/iam)

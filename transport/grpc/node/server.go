@@ -2,16 +2,15 @@ package node
 
 import (
 	"context"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"github.com/cr-mao/lorig/cluster"
 	"github.com/cr-mao/lorig/packet"
 	"github.com/cr-mao/lorig/transport"
 	"github.com/cr-mao/lorig/transport/grpc/internal/code"
 	"github.com/cr-mao/lorig/transport/grpc/internal/pb"
 	"github.com/cr-mao/lorig/transport/grpc/internal/server"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func NewServer(provider transport.NodeProvider, opts *server.Options) (*server.Server, error) {

@@ -1,15 +1,22 @@
+/**
+ * @Author: fuxiao
+ * @Email: 576101059@qq.com
+ * @Date: 2022/9/15 5:37 下午
+ * @Desc: TODO
+ */
+
 package etcd_test
 
 import (
 	"context"
 	"fmt"
+	"github.com/cr-mao/lorig/cluster"
 	"testing"
 	"time"
 
-	"github.com/cr-mao/lorig/cluster"
-	"github.com/cr-mao/lorig/internal/net"
 	"github.com/cr-mao/lorig/registry"
 	"github.com/cr-mao/lorig/registry/etcd"
+	"github.com/cr-mao/lorig/utils/xnet"
 )
 
 const (
@@ -20,8 +27,7 @@ const (
 var reg = etcd.NewRegistry()
 
 func TestRegistry_Register1(t *testing.T) {
-	t.SkipNow()
-	host, err := net.ExternalIP()
+	host, err := xnet.ExternalIP()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,8 +73,7 @@ func TestRegistry_Register1(t *testing.T) {
 }
 
 func TestRegistry_Register2(t *testing.T) {
-	t.SkipNow()
-	host, err := net.ExternalIP()
+	host, err := xnet.ExternalIP()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -84,11 +89,11 @@ func TestRegistry_Register2(t *testing.T) {
 	}
 
 	go func() {
-		time.Sleep(3 * time.Second)
+		time.Sleep(5 * time.Second)
 		reg.Stop()
 	}()
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(30 * time.Second)
 }
 
 func TestRegistry_Services(t *testing.T) {
@@ -103,7 +108,6 @@ func TestRegistry_Services(t *testing.T) {
 }
 
 func TestRegistry_Watch(t *testing.T) {
-	t.SkipNow()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	watcher1, err := reg.Watch(ctx, serviceName)
 	cancel()

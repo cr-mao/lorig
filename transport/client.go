@@ -2,6 +2,7 @@ package transport
 
 import (
 	"context"
+
 	"github.com/cr-mao/lorig/packet"
 	"github.com/cr-mao/lorig/session"
 )
@@ -31,3 +32,18 @@ type GateClient interface {
 	// Disconnect 断开连接
 	Disconnect(ctx context.Context, kind session.Kind, target int64, isForce bool) (miss bool, err error)
 }
+
+type ServiceClient interface {
+	// Call 调用服务方法
+	Call(ctx context.Context, service, method string, args interface{}, reply interface{}, opts ...interface{}) error
+	// Client 获取内部客户端
+	Client() interface{}
+}
+
+type Message struct {
+	Seq    int32  // 序列号
+	Route  int32  // 路由
+	Buffer []byte // 消息内容
+}
+
+type NewServiceClientFunc func(target string) (ServiceClient, error)

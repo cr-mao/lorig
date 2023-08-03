@@ -2,10 +2,9 @@ package xtime
 
 import (
 	"fmt"
+	"github.com/cr-mao/lorig/conf"
 	"math"
 	"time"
-
-	"github.com/cr-mao/lorig/conf"
 )
 
 const (
@@ -48,7 +47,7 @@ type TransformRule struct {
 }
 
 func init() {
-	timezone := conf.GetString("app.timezone", "UTC")
+	timezone := conf.Get("app.timezone", "utc")
 	if loc, err := time.LoadLocation(timezone); err != nil {
 		location = time.Local
 	} else {

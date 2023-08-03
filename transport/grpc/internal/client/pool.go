@@ -1,9 +1,8 @@
 package client
 
 import (
-	"sync/atomic"
-
 	"google.golang.org/grpc"
+	"sync/atomic"
 )
 
 type Pool struct {

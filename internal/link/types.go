@@ -1,7 +1,57 @@
-/**
-User: cr-mao
-Date: 2023/7/31
-Time: 04:36
-Desc: types.go
-*/
 package link
+
+import (
+	"github.com/cr-mao/lorig/cluster"
+	"github.com/cr-mao/lorig/session"
+)
+
+type GetIPArgs struct {
+	GID    string       // 网关ID，会话类型为用户时可忽略此参数
+	Kind   session.Kind // 会话类型，session.Conn 或 session.User
+	Target int64        // 会话目标，CID 或 UID
+}
+
+type Message struct {
+	Seq   int32       // 序列号
+	Route int32       // 路由ID
+	Data  interface{} // 消息数据，接收json、proto、[]byte
+}
+
+type PushArgs struct {
+	GID     string       // 网关ID，会话类型为用户时可忽略此参数
+	Kind    session.Kind // 会话类型，session.Conn 或 session.User
+	Target  int64        // 会话目标，CID 或 UID
+	Message *Message     // 消息
+}
+
+type MulticastArgs struct {
+	GID     string       // 网关ID，会话类型为用户时可忽略此参数
+	Kind    session.Kind // 会话类型，session.Conn 或 session.User
+	Targets []int64      // 会话目标，CID 或 UID
+	Message *Message     // 消息
+}
+
+type BroadcastArgs struct {
+	Kind    session.Kind // 会话类型，session.Conn 或 session.User
+	Message *Message     // 消息
+}
+
+type DeliverArgs struct {
+	NID     string      // 接收节点。存在接收节点时，消息会直接投递给接收节点；不存在接收节点时，系统定位用户所在节点，然后投递。
+	CID     int64       // 连接ID
+	UID     int64       // 用户ID
+	Message interface{} // 消息
+}
+
+type TriggerArgs struct {
+	Event cluster.Event // 事件
+	CID   int64         // 连接ID
+	UID   int64         // 用户ID
+}
+
+type DisconnectArgs struct {
+	GID     string       // 网关ID，会话类型为用户时可忽略此参数
+	Kind    session.Kind // 会话类型，session.Conn 或 session.User
+	Target  int64        // 会话目标，CID 或 UID
+	IsForce bool         // 是否强制断开
+}

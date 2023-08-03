@@ -1,9 +1,8 @@
 package discovery
 
 import (
-	"google.golang.org/grpc/resolver"
-
 	"github.com/cr-mao/lorig/registry"
+	"google.golang.org/grpc/resolver"
 )
 
 const scheme = "discovery"

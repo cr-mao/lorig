@@ -1,12 +1,19 @@
+/**
+ * @Author: fuxiao
+ * @Email: 576101059@qq.com
+ * @Date: 2022/9/17 1:22 上午
+ * @Desc: TODO
+ */
+
 package etcd
 
 import (
 	"context"
 	"fmt"
+	clientv3 "go.etcd.io/etcd/client/v3"
 	"time"
 
 	"github.com/cr-mao/lorig/registry"
-	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 type heartbeat struct {

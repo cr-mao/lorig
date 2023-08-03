@@ -1,14 +1,16 @@
 package grpc
 
 import (
-	"sync"
-
 	"github.com/cr-mao/lorig/internal/endpoint"
 	"github.com/cr-mao/lorig/registry"
 	"github.com/cr-mao/lorig/transport"
 	"github.com/cr-mao/lorig/transport/grpc/gate"
 	"github.com/cr-mao/lorig/transport/grpc/internal/client"
+	"github.com/cr-mao/lorig/transport/grpc/internal/pb"
+	"github.com/cr-mao/lorig/transport/grpc/internal/server"
 	"github.com/cr-mao/lorig/transport/grpc/node"
+
+	"sync"
 )
 
 type Transporter struct {
@@ -43,6 +45,11 @@ func (t *Transporter) NewNodeServer(provider transport.NodeProvider) (transport.
 	return node.NewServer(provider, &t.opts.server)
 }
 
+// NewServiceServer 新建微服务服务器
+func (t *Transporter) NewServiceServer() (transport.Server, error) {
+	return server.NewServer(&t.opts.server, pb.Gate_ServiceDesc.ServiceName, pb.Node_ServiceDesc.ServiceName)
+}
+
 // NewGateClient 新建网关客户端
 func (t *Transporter) NewGateClient(ep *endpoint.Endpoint) (transport.GateClient, error) {
 	t.once.Do(func() {
@@ -69,4 +76,18 @@ func (t *Transporter) NewNodeClient(ep *endpoint.Endpoint) (transport.NodeClient
 	}
 
 	return node.NewClient(cc), nil
+}
+
+// NewServiceClient 新建微服务客户端
+func (t *Transporter) NewServiceClient(target string) (transport.ServiceClient, error) {
+	t.once.Do(func() {
+		t.builder = client.NewBuilder(&t.opts.client)
+	})
+
+	cc, err := t.builder.Build(target)
+	if err != nil {
+		return nil, err
+	}
+
+	return client.NewClient(cc), nil
 }

@@ -1,13 +1,20 @@
+/**
+ * @Author: fuxiao
+ * @Email: 576101059@qq.com
+ * @Date: 2022/9/13 12:32 上午
+ * @Desc: TODO
+ */
+
 package etcd
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.etcd.io/etcd/client/v3"
 	"sync"
 
 	"github.com/cr-mao/lorig/registry"
-	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 var _ registry.Registry = &Registry{}

@@ -2,48 +2,66 @@ package gate
 
 import (
 	"context"
-	"math/rand"
+	"github.com/cr-mao/lorig/conf"
+	"github.com/cr-mao/lorig/locate"
+	"github.com/cr-mao/lorig/transport"
+	"github.com/cr-mao/lorig/utils/xuuid"
 	"time"
 
-	"github.com/cr-mao/lorig/conf"
-	"github.com/cr-mao/lorig/location"
 	"github.com/cr-mao/lorig/network"
+	"github.com/cr-mao/lorig/registry"
 )
 
 const (
-	defaultName    = "gate_name" // 默认名称
-	defaultTimeOut = 3
+	defaultName    = "gate"          // 默认名称
+	defaultTimeout = 3 * time.Second // 默认超时时间
 )
 
 const (
 	defaultIDKey      = "cluster.gate.id"
 	defaultNameKey    = "cluster.gate.name"
-	defaultTimeOutKey = "cluster.gate.timeout"
+	defaultTimeoutKey = "cluster.gate.timeout"
 )
 
 type Option func(o *options)
 
 type options struct {
-	id       int32           // 实例ID
-	name     string          // 实例名称
-	ctx      context.Context // 上下文
-	server   network.Server  // 网关服务器
-	location location.Locator
-	timeout  time.Duration // 用户定位器, redis超时时间, rpc 请求超时时间。
+	id          string                // 实例ID
+	name        string                // 实例名称
+	ctx         context.Context       // 上下文
+	timeout     time.Duration         // RPC调用超时时间
+	server      network.Server        // 网关服务器
+	locator     locate.Locator        // 用户定位器
+	registry    registry.Registry     // 服务注册器
+	transporter transport.Transporter // 消息传输器
 }
 
 func defaultOptions() *options {
 	opts := &options{
 		ctx:     context.Background(),
-		name:    conf.GetString(defaultNameKey, defaultName),
-		timeout: time.Duration(conf.GetInt64(defaultTimeOutKey, defaultTimeOut)) * time.Second,
+		name:    defaultName,
+		timeout: defaultTimeout,
 	}
-	opts.id = conf.GetInt32(defaultIDKey, rand.Int31())
+
+	if id := conf.GetString(defaultIDKey); id != "" {
+		opts.id = id
+	} else if id, err := xuuid.UUID(); err == nil {
+		opts.id = id
+	}
+
+	if name := conf.GetString(defaultNameKey); name != "" {
+		opts.name = name
+	}
+
+	if timeout := conf.GetInt64(defaultTimeoutKey); timeout > 0 {
+		opts.timeout = time.Duration(timeout) * time.Second
+	}
+
 	return opts
 }
 
 // WithID 设置实例ID
-func WithID(id int32) Option {
+func WithID(id string) Option {
 	return func(o *options) { o.id = id }
 }
 
@@ -62,6 +80,22 @@ func WithServer(server network.Server) Option {
 	return func(o *options) { o.server = server }
 }
 
-func WithLocation(location location.Locator) Option {
-	return func(o *options) { o.location = location }
+// WithTimeout 设置RPC调用超时时间
+func WithTimeout(timeout time.Duration) Option {
+	return func(o *options) { o.timeout = timeout }
+}
+
+// WithLocator 设置用户定位器
+func WithLocator(locator locate.Locator) Option {
+	return func(o *options) { o.locator = locator }
+}
+
+// WithRegistry 设置服务注册器
+func WithRegistry(r registry.Registry) Option {
+	return func(o *options) { o.registry = r }
+}
+
+// WithTransporter 设置消息传输器
+func WithTransporter(transporter transport.Transporter) Option {
+	return func(o *options) { o.transporter = transporter }
 }
